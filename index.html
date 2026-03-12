@@ -1,1602 +1,1938 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; frame-src https://www.youtube-nocookie.com; img-src 'self' data:; connect-src 'self';">
-    <meta name="referrer" content="no-referrer-when-downgrade">
-    <title>Unser Gemuese-Garten! - Pflanzen-Abenteuer fuer Kinder</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; frame-src https://www.youtube-nocookie.com; img-src 'self' data:">
+<title>Unser Gemuese-Garten! - Pflanzen-Abenteuer fuer Kinder</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
 
-        /* ===== CSS CUSTOM PROPERTIES ===== */
-        :root {
-            --gelb: #F7E03B;
-            --orange: #FF7040;
-            --blau: #2EBFE9;
-            --blau2: #59ACFF;
-            --gruen: #62D962;
-            --gruen-dunkel: #00AB4E;
-            --pink: #FF8CBC;
-            --lila: #A220DF;
-            --rot: #EF4444;
-            --weiss: #FFFFFF;
-            --schatten: rgba(0,0,0,0.12);
-            --tomate-bg: #FFF0F0;
-            --tomate-accent: #EF4444;
-            --karotte-bg: #FFF5EB;
-            --karotte-accent: #FF7040;
-            --erbsen-bg: #EDFFF0;
-            --erbsen-accent: #00AB4E;
-            --gurke-bg: #E8FFF0;
-            --gurke-accent: #2D8B46;
-            --quiz-bg: #F5EDFF;
-            --check-bg: #FFFDE8;
-            --radius-pill: 9999px;
-            --radius-card: 24px;
-            --gap: 2em;
-            --max-w: 1080px;
-            --shadow-3d: 0px 4px 0px 0px;
-            --transition: 0.25s cubic-bezier(.4,0,.2,1);
-        }
+/* ===== CUSTOM PROPERTIES ===== */
+:root {
+  --gelb: #F7E03B;
+  --orange: #FF7040;
+  --blau: #2EBFE9;
+  --gruen: #62D962;
+  --pink: #FF8CBC;
+  --lila: #A220DF;
+  --rot: #EF4444;
+  --weiss: #FFFFFF;
+  --schatten: rgba(0,0,0,0.12);
+  --radius-pill: 9999px;
+  --radius-card: 24px;
+  --gap: 1.5em;
+  --max-w: 900px;
+  --transition: 0.25s cubic-bezier(.4,0,.2,1);
+  --accent: var(--gruen);
+  --bg: #F0FFF0;
+}
 
-        /* ===== RESET & BASE ===== */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+[data-thema="tomate"] { --accent: #EF4444; --bg: #FFF0F0; }
+[data-thema="karotte"] { --accent: #FF7040; --bg: #FFF5EB; }
+[data-thema="erbsen"] { --accent: #00AB4E; --bg: #EDFFF0; }
+[data-thema="gurke"] { --accent: #2D8B46; --bg: #E8FFFE; }
 
-        html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 18px; scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  color: #2D2020;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: #F0FFF0;
+}
+h1, h2, h3 { font-family: 'Fredoka One', cursive; font-weight: 400; }
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            line-height: 1.6;
-            color: #2D2D2D;
-            overflow-x: hidden;
-            background: var(--gelb);
-            -webkit-tap-highlight-color: transparent;
-        }
+/* ===== VIEW SYSTEM ===== */
+.ansicht {
+  display: none;
+  min-height: 100dvh;
+  padding: 1.5rem;
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.ansicht.aktiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 1;
+  transform: scale(1);
+}
 
-        h1, h2, h3, h4 { font-family: 'Fredoka One', cursive; line-height: 1.2; }
+/* ===== GARDEN VIEW ===== */
+#garten {
+  background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 55%, #7BC67B 55%, #4A8B3F 100%);
+  justify-content: center;
+  gap: 2rem;
+  text-align: center;
+}
+.garten-titel {
+  color: var(--weiss);
+  font-size: 2.2rem;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+  line-height: 1.2;
+}
+.garten-untertitel {
+  color: var(--weiss);
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+  margin-top: -0.5rem;
+}
+.garten-raster {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 500px;
+  width: 100%;
+}
+.garten-karte {
+  background: rgba(255,255,255,0.92);
+  border-radius: var(--radius-card);
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.garten-karte:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 10px 0 rgba(0,0,0,0.08), 0 16px 30px rgba(0,0,0,0.12);
+}
+.garten-karte:active { transform: translateY(-2px) scale(0.98); }
+.garten-karte-name { font-family: 'Fredoka One', cursive; font-size: 1.1rem; }
 
-        img { max-width: 100%; display: block; }
+/* ===== CSS CHARACTERS ===== */
+.charakter { position: relative; display: inline-block; }
+.charakter:hover { transform: translateY(-4px) scale(1.06); }
+.charakter { transition: transform var(--transition); }
 
-        a { color: inherit; text-decoration: none; }
+/* Tina Tomate */
+.tina { width: 90px; height: 100px; }
+.tina-koerper {
+  width: 80px; height: 80px;
+  background: radial-gradient(circle at 35% 35%, #FF6B6B, #EF4444 50%, #DC2626);
+  border-radius: 50%;
+  position: absolute; bottom: 0; left: 5px;
+  box-shadow: inset -8px -8px 15px rgba(0,0,0,0.15), inset 4px 4px 10px rgba(255,255,255,0.2);
+}
+.tina-blatt {
+  width: 30px; height: 18px;
+  background: #22C55E;
+  border-radius: 50% 50% 20% 20%;
+  position: absolute; top: 2px; left: 30px;
+  transform-origin: bottom center;
+}
+.tina-blatt::before, .tina-blatt::after {
+  content: ''; position: absolute;
+  width: 20px; height: 14px;
+  background: #16A34A;
+  border-radius: 50%;
+  top: 4px;
+}
+.tina-blatt::before { left: -12px; transform: rotate(-30deg); }
+.tina-blatt::after { right: -12px; transform: rotate(30deg); }
+.tina-stiel {
+  width: 4px; height: 12px;
+  background: #15803D;
+  position: absolute; top: 6px; left: 43px;
+  border-radius: 2px;
+}
+.auge {
+  width: 10px; height: 12px;
+  background: #2D2020;
+  border-radius: 50%;
+  position: absolute;
+}
+.auge::after {
+  content: ''; position: absolute;
+  width: 4px; height: 4px;
+  background: white;
+  border-radius: 50%;
+  top: 2px; left: 2px;
+}
+.tina .auge.links { top: 36px; left: 24px; }
+.tina .auge.rechts { top: 36px; left: 52px; }
+.tina-mund {
+  width: 22px; height: 11px;
+  border-bottom: 3px solid #2D2020;
+  border-radius: 0 0 50% 50%;
+  position: absolute; top: 52px; left: 34px;
+}
+.tina-wange {
+  width: 12px; height: 8px;
+  background: rgba(255,150,150,0.5);
+  border-radius: 50%;
+  position: absolute; top: 50px;
+}
+.tina-wange.links { left: 14px; }
+.tina-wange.rechts { left: 62px; }
 
-        /* ===== UTILITY ===== */
-        .container { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
-        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+/* Karlo Karotte */
+.karlo { width: 70px; height: 110px; }
+.karlo-koerper {
+  width: 50px; height: 80px;
+  background: linear-gradient(135deg, #FFB347 0%, #FF8C00 40%, #E67300);
+  clip-path: polygon(15% 0%, 85% 0%, 65% 100%, 35% 100%);
+  position: absolute; bottom: 0; left: 10px;
+  border-radius: 0 0 8px 8px;
+}
+.karlo-koerper::before {
+  content: ''; position: absolute;
+  width: 3px; height: 60px;
+  background: rgba(0,0,0,0.08);
+  top: 10px; left: 18px;
+  transform: rotate(2deg);
+}
+.karlo-haar {
+  position: absolute; top: 0; left: 22px;
+  width: 5px; height: 28px;
+  background: #22C55E;
+  border-radius: 3px 3px 0 0;
+  transform-origin: bottom;
+}
+.karlo-haar:nth-child(2) { left: 30px; transform: rotate(12deg); height: 24px; }
+.karlo-haar:nth-child(3) { left: 16px; transform: rotate(-10deg); height: 22px; }
+.karlo .auge.links { top: 40px; left: 20px; }
+.karlo .auge.rechts { top: 38px; left: 42px; }
+.karlo-mund {
+  width: 16px; height: 8px;
+  border-bottom: 3px solid #2D2020;
+  border-radius: 0 0 40% 60%;
+  position: absolute; top: 56px; left: 28px;
+  transform: rotate(5deg);
+}
+.karlo-wange {
+  width: 10px; height: 7px;
+  background: rgba(255,180,100,0.5);
+  border-radius: 50%;
+  position: absolute; top: 52px;
+}
+.karlo-wange.links { left: 12px; }
+.karlo-wange.rechts { left: 50px; }
 
-        /* ===== PILL BUTTON ===== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.2em;
-            padding: 16px 36px;
-            border: none;
-            border-radius: var(--radius-pill);
-            cursor: pointer;
-            min-width: 60px;
-            min-height: 60px;
-            transition: transform var(--transition), box-shadow var(--transition);
-            position: relative;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        .btn:hover, .btn:focus-visible {
-            transform: scale(1.08);
-        }
-        .btn:active {
-            transform: scale(0.97) translateY(3px);
-            box-shadow: 0px 1px 0px 0px var(--schatten) !important;
-        }
-        .btn-gelb { background: var(--gelb); color: #5C4A00; box-shadow: var(--shadow-3d) #C9B520; }
-        .btn-orange { background: var(--orange); color: #fff; box-shadow: var(--shadow-3d) #CC5530; }
-        .btn-gruen { background: var(--gruen); color: #fff; box-shadow: var(--shadow-3d) #3BA83B; }
-        .btn-blau { background: var(--blau); color: #fff; box-shadow: var(--shadow-3d) #1A96BC; }
-        .btn-pink { background: var(--pink); color: #fff; box-shadow: var(--shadow-3d) #D06A9A; }
-        .btn-lila { background: var(--lila); color: #fff; box-shadow: var(--shadow-3d) #7A18A8; }
-        .btn-rot { background: var(--rot); color: #fff; box-shadow: var(--shadow-3d) #B33; }
+/* Erbsen-Bande */
+.erbsen { width: 110px; height: 80px; }
+.schote {
+  width: 100px; height: 60px;
+  background: linear-gradient(180deg, #86EFAC, #22C55E 60%, #15803D);
+  border-radius: 50% / 40%;
+  position: absolute; bottom: 0; left: 5px;
+  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.1);
+  overflow: visible;
+}
+.erbse {
+  width: 26px; height: 26px;
+  background: radial-gradient(circle at 35% 35%, #86EFAC, #4ADE80 50%, #22C55E);
+  border-radius: 50%;
+  position: absolute; top: 6px;
+  box-shadow: inset -3px -3px 5px rgba(0,0,0,0.1);
+}
+.erbse:nth-child(1) { left: 10px; }
+.erbse:nth-child(2) { left: 38px; top: 4px; }
+.erbse:nth-child(3) { left: 64px; top: 7px; }
+.erbse-auge {
+  width: 5px; height: 6px;
+  background: #2D2020;
+  border-radius: 50%;
+  position: absolute; top: 8px;
+}
+.erbse-auge::after {
+  content: ''; position: absolute;
+  width: 2px; height: 2px;
+  background: white; border-radius: 50%;
+  top: 1px; left: 1px;
+}
+.erbse-auge.links { left: 6px; }
+.erbse-auge.rechts { left: 15px; }
+.erbse-mund {
+  width: 8px; height: 4px;
+  position: absolute; top: 17px; left: 9px;
+}
+.erbse:nth-child(1) .erbse-mund {
+  border-bottom: 2px solid #2D2020; border-radius: 0 0 50% 50%;
+}
+.erbse:nth-child(2) .erbse-mund {
+  width: 6px; height: 6px;
+  background: #2D2020; border-radius: 50%;
+  top: 16px; left: 10px;
+}
+.erbse:nth-child(3) .erbse-mund {
+  border-bottom: 2px solid #2D2020; border-radius: 0 0 50% 50%;
+  width: 10px;
+}
 
-        /* ===== 3D CARD ===== */
-        .card-3d {
-            background: var(--weiss);
-            border-radius: var(--radius-card);
-            box-shadow: 0 6px 0 0 var(--schatten), 0 2px 12px var(--schatten);
-            transition: transform var(--transition), box-shadow var(--transition);
-            overflow: hidden;
-        }
-        .card-3d:hover {
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 12px 0 0 var(--schatten), 0 4px 24px var(--schatten);
-        }
+/* Gustav Gurke */
+.gustav { width: 60px; height: 120px; }
+.gustav-koerper {
+  width: 45px; height: 100px;
+  background: linear-gradient(135deg, #6BCB77, #2D8B46 60%, #1E6B35);
+  border-radius: 40% 40% 45% 45%;
+  position: absolute; bottom: 0; left: 8px;
+  box-shadow: inset -6px -6px 12px rgba(0,0,0,0.12);
+}
+.gustav-noppe {
+  width: 5px; height: 5px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  position: absolute;
+}
+.gustav-noppe:nth-child(1) { top: 20px; left: 8px; }
+.gustav-noppe:nth-child(2) { top: 35px; left: 28px; }
+.gustav-noppe:nth-child(3) { top: 50px; left: 12px; }
+.gustav-noppe:nth-child(4) { top: 65px; left: 25px; }
+.gustav-noppe:nth-child(5) { top: 80px; left: 15px; }
+.gustav .auge {
+  height: 8px;
+}
+.gustav .auge.links { top: 28px; left: 18px; }
+.gustav .auge.rechts { top: 28px; left: 34px; }
+.gustav-mund {
+  width: 14px; height: 2px;
+  background: #2D2020;
+  position: absolute; top: 42px; left: 22px;
+  border-radius: 2px;
+}
+.gustav-wange {
+  width: 8px; height: 5px;
+  background: rgba(100,200,100,0.4);
+  border-radius: 50%;
+  position: absolute; top: 38px;
+}
+.gustav-wange.links { left: 10px; }
+.gustav-wange.rechts { left: 42px; }
 
-        /* ===== SECTION HEADING ===== */
-        .section-heading {
-            text-align: center;
-            margin-bottom: 1.5em;
-        }
-        .section-heading .emoji-anchor {
-            font-size: 4em;
-            display: block;
-            margin-bottom: 0.1em;
-            animation: wiggle 2s ease-in-out infinite;
-        }
-        .section-heading h2 {
-            font-size: 2.4em;
-            margin-bottom: 0.2em;
-        }
-        .section-heading p {
-            font-size: 1.1em;
-            opacity: 0.8;
-        }
+/* Character idle animations */
+@keyframes wippen {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.charakter-animation { animation: wippen 2.5s ease-in-out infinite; }
 
-        @keyframes wiggle {
-            0%, 100% { transform: rotate(-3deg); }
-            50% { transform: rotate(3deg); }
-        }
+/* Large character versions */
+.charakter-gross { transform: scale(1.6); transform-origin: center bottom; margin: 2rem auto 1rem; }
 
-        /* ===== STEP CARDS ===== */
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--gap);
-        }
-        .step-card {
-            background: var(--weiss);
-            border-radius: var(--radius-card);
-            padding: 24px 20px;
-            text-align: center;
-            box-shadow: 0 6px 0 0 var(--schatten), 0 2px 12px var(--schatten);
-            transition: transform var(--transition);
-            position: relative;
-        }
-        .step-card:hover { transform: translateY(-4px) scale(1.04); }
-        .step-card .step-num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px; height: 48px;
-            border-radius: 50%;
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.3em;
-            color: #fff;
-            margin-bottom: 12px;
-        }
-        .step-card .step-emoji { font-size: 3em; display: block; margin-bottom: 10px; }
-        .step-card p { font-size: 0.95em; }
+/* ===== BACK BUTTON ===== */
+.zurueck-btn {
+  position: fixed; top: 1rem; left: 1rem;
+  width: 48px; height: 48px;
+  background: var(--weiss);
+  border: 3px solid var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 100;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+  transition: transform var(--transition);
+  font-size: 1.3rem; color: var(--accent);
+}
+.zurueck-btn:hover { transform: scale(1.1); }
+.zurueck-btn:active { transform: scale(0.95); }
 
-        /* ===== FUN FACT BOX ===== */
-        .fun-fact {
-            background: var(--weiss);
-            border-radius: var(--radius-card);
-            padding: 28px 24px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 6px 0 0 var(--schatten), 0 2px 12px var(--schatten);
-            margin: var(--gap) 0;
-            border-left: 8px solid;
-        }
-        .fun-fact .fact-emoji { font-size: 3em; flex-shrink: 0; }
-        .fun-fact p { font-size: 1em; }
+/* ===== WELT VIEW ===== */
+.welt-ansicht {
+  background: var(--bg);
+  width: 100%;
+}
+.welt-header {
+  text-align: center;
+  padding-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+.welt-header h1 {
+  font-size: 1.8rem;
+  color: var(--accent);
+}
 
-        /* ===== VIDEO EMBED ===== */
-        .video-wrap {
-            border-radius: var(--radius-card);
-            overflow: hidden;
-            box-shadow: 0 6px 0 0 var(--schatten), 0 2px 12px var(--schatten);
-            margin: var(--gap) 0;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-        }
-        .video-wrap iframe {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            border: none;
-        }
+/* ===== TAB BAR ===== */
+.tab-leiste {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.5rem 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 50;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.tab-leiste::-webkit-scrollbar { display: none; }
+.tab-btn {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: rgba(255,255,255,0.7);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  white-space: nowrap;
+  color: #666;
+  transition: all var(--transition);
+  border-bottom: 3px solid transparent;
+}
+.tab-btn.aktiv {
+  background: var(--weiss);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.08);
+}
+.tab-btn:hover:not(.aktiv) { background: rgba(255,255,255,0.9); }
 
-        /* ======================================================
-           DECKBLATT / HERO
-           ====================================================== */
-        .deckblatt {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #59ACFF 0%, #2EBFE9 30%, #62D962 70%, #00AB4E 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            padding: 40px 20px 120px;
-        }
+/* ===== TAB CONTENT ===== */
+.tab-inhalt {
+  display: none;
+  max-width: var(--max-w);
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+.tab-inhalt.aktiv { display: block; }
 
-        /* Wolken */
-        .wolken { position: absolute; top: 0; left: 0; width: 100%; height: 220px; pointer-events: none; z-index: 1; }
-        .wolke {
-            position: absolute; background: rgba(255,255,255,0.85);
-            border-radius: 100px; animation: schweben linear infinite;
-        }
-        .wolke::before, .wolke::after { content: ''; position: absolute; background: inherit; border-radius: 50%; }
-        .wolke:nth-child(1) { width: 140px; height: 55px; top: 30px; animation-duration: 22s; }
-        .wolke:nth-child(1)::before { width: 70px; height: 70px; top: -35px; left: 25px; }
-        .wolke:nth-child(1)::after { width: 90px; height: 55px; top: -22px; left: 55px; }
-        .wolke:nth-child(2) { width: 110px; height: 42px; top: 90px; animation-duration: 32s; animation-delay: -8s; }
-        .wolke:nth-child(2)::before { width: 55px; height: 55px; top: -28px; left: 18px; }
-        .wolke:nth-child(2)::after { width: 75px; height: 42px; top: -16px; left: 42px; }
-        .wolke:nth-child(3) { width: 100px; height: 38px; top: 145px; animation-duration: 28s; animation-delay: -18s; }
-        .wolke:nth-child(3)::before { width: 50px; height: 50px; top: -22px; left: 12px; }
-        .wolke:nth-child(3)::after { width: 65px; height: 38px; top: -14px; left: 38px; }
-        @keyframes schweben { from { left: -220px; } to { left: 110%; } }
+/* ===== SPEECH BUBBLE ===== */
+.sprechblase {
+  background: var(--weiss);
+  border-radius: var(--radius-card);
+  padding: 1.2rem 1.5rem;
+  font-size: 1.1rem;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin: 1rem auto;
+  max-width: 500px;
+  line-height: 1.5;
+}
+.sprechblase::after {
+  content: '';
+  position: absolute; bottom: -12px; left: 50%;
+  transform: translateX(-50%);
+  border: 12px solid transparent;
+  border-top-color: var(--weiss);
+  border-bottom: 0;
+}
 
-        /* Sonne */
-        .sonne {
-            position: absolute; top: 30px; right: 40px;
-            width: 100px; height: 100px;
-            background: var(--gelb); border-radius: 50%;
-            box-shadow: 0 0 50px var(--gelb), 0 0 100px rgba(247,224,59,0.4);
-            animation: strahlen 3s ease-in-out infinite;
-            z-index: 2;
-        }
-        .sonne .auge { position: absolute; width: 11px; height: 13px; background: #444; border-radius: 50%; top: 38px; }
-        .sonne .auge.l { left: 28px; } .sonne .auge.r { right: 28px; }
-        .sonne .mund { position: absolute; width: 26px; height: 13px; border-bottom: 3px solid #444; border-radius: 0 0 50% 50%; bottom: 28px; left: 50%; transform: translateX(-50%); }
-        @keyframes strahlen {
-            0%,100% { box-shadow: 0 0 50px var(--gelb), 0 0 100px rgba(247,224,59,0.4); }
-            50% { box-shadow: 0 0 70px var(--gelb), 0 0 140px rgba(247,224,59,0.5); }
-        }
+/* ===== STECKBRIEF ===== */
+.steckbrief {
+  background: var(--weiss);
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+  max-width: 400px;
+  margin: 1.5rem auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.steckbrief h3 {
+  font-size: 1.2rem;
+  color: var(--accent);
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+.steckbrief-zeile {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed rgba(0,0,0,0.08);
+}
+.steckbrief-zeile:last-child { border-bottom: none; }
+.steckbrief-label { font-weight: 800; min-width: 100px; }
 
-        /* Hero Title */
-        .hero-title {
-            font-family: 'Fredoka One', cursive;
-            font-size: 3.5em;
-            color: #fff;
-            text-shadow: 3px 3px 0 var(--gruen-dunkel), 6px 6px 0 rgba(0,0,0,0.12);
-            text-align: center;
-            z-index: 3;
-            margin-bottom: 0.1em;
-            animation: heroIn 0.8s ease-out;
-        }
-        .hero-subtitle {
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.5em;
-            color: #fff;
-            text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
-            text-align: center;
-            z-index: 3;
-            margin-bottom: 1.2em;
-            animation: heroIn 0.8s ease-out 0.15s both;
-        }
-        @keyframes heroIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.9); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+/* ===== 3D BUTTONS ===== */
+.btn-3d {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  padding: 0.7rem 1.8rem;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  color: var(--weiss);
+  background: var(--accent);
+  box-shadow: 0 4px 0 0 color-mix(in srgb, var(--accent) 70%, black);
+  transition: transform var(--transition), box-shadow var(--transition);
+  display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 0 color-mix(in srgb, var(--accent) 70%, black); }
+.btn-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 0 color-mix(in srgb, var(--accent) 70%, black); }
 
-        /* Hero Character Cards */
-        .hero-cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            max-width: 800px;
-            width: 100%;
-            z-index: 3;
-            animation: heroIn 0.8s ease-out 0.3s both;
-        }
-        .hero-card {
-            background: var(--weiss);
-            border-radius: var(--radius-card);
-            padding: 24px 16px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform var(--transition), box-shadow var(--transition);
-            box-shadow: 0 8px 0 0 var(--schatten), 0 2px 16px var(--schatten);
-            min-height: 80px;
-        }
-        .hero-card:hover, .hero-card:focus-visible {
-            transform: translateY(-10px) scale(1.08);
-            box-shadow: 0 16px 0 0 var(--schatten), 0 4px 30px var(--schatten);
-        }
-        .hero-card:active {
-            transform: translateY(2px) scale(0.98);
-        }
-        .hero-card .char-emoji {
-            font-size: 4em;
-            display: block;
-            margin-bottom: 8px;
-            animation: bounce-char 2s ease-in-out infinite;
-        }
-        .hero-card:nth-child(1) .char-emoji { animation-delay: 0s; }
-        .hero-card:nth-child(2) .char-emoji { animation-delay: 0.3s; }
-        .hero-card:nth-child(3) .char-emoji { animation-delay: 0.6s; }
-        .hero-card:nth-child(4) .char-emoji { animation-delay: 0.9s; }
-        .hero-card .char-name {
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.2em;
-        }
-        .hero-card:nth-child(1) { border-bottom: 6px solid var(--rot); }
-        .hero-card:nth-child(1) .char-name { color: var(--rot); }
-        .hero-card:nth-child(2) { border-bottom: 6px solid var(--orange); }
-        .hero-card:nth-child(2) .char-name { color: var(--orange); }
-        .hero-card:nth-child(3) { border-bottom: 6px solid var(--gruen-dunkel); }
-        .hero-card:nth-child(3) .char-name { color: var(--gruen-dunkel); }
-        .hero-card:nth-child(4) { border-bottom: 6px solid #2D8B46; }
-        .hero-card:nth-child(4) .char-name { color: #2D8B46; }
+/* ===== SLIDESHOW ===== */
+.diashow {
+  background: var(--weiss);
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+  max-width: 550px;
+  margin: 1rem auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.dia {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.dia.aktiv { display: flex; }
+.dia-nummer {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.5rem;
+  color: var(--accent);
+  opacity: 0.3;
+}
+.dia-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  padding: 0 1rem;
+}
+.dia-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.dia-pfeil {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  background: var(--weiss);
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.08);
+}
+.dia-pfeil:hover { background: var(--accent); color: var(--weiss); }
+.dia-pfeil:disabled { opacity: 0.3; cursor: default; }
+.dia-pfeil:disabled:hover { background: var(--weiss); color: var(--accent); }
+.dia-punkte {
+  display: flex; gap: 0.4rem;
+}
+.dia-punkt {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  transition: background var(--transition);
+}
+.dia-punkt.aktiv { background: var(--accent); }
+.dia-video {
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 450px;
+}
+.dia-video iframe {
+  width: 100%; height: 250px;
+  border: none; border-radius: 12px;
+}
 
-        @keyframes bounce-char {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
+/* ===== FLIP CARDS ===== */
+.karten-raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  max-width: 700px;
+  margin: 1rem auto;
+}
+.flip-karte {
+  perspective: 800px;
+  height: 200px;
+  cursor: pointer;
+}
+.flip-karte-inner {
+  position: relative;
+  width: 100%; height: 100%;
+  transition: transform 0.6s ease;
+  transform-style: preserve-3d;
+}
+.flip-karte.umgedreht .flip-karte-inner {
+  transform: rotateY(180deg);
+}
+.flip-karte-vorne, .flip-karte-hinten {
+  position: absolute;
+  width: 100%; height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+  text-align: center;
+}
+.flip-karte-vorne {
+  background: var(--weiss);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.2rem;
+  color: var(--accent);
+}
+.flip-karte-vorne::after {
+  content: 'Tippe mich!';
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 0.5rem;
+}
+.flip-karte-hinten {
+  background: var(--accent);
+  color: var(--weiss);
+  transform: rotateY(180deg);
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 
-        /* Earth strip at bottom of hero */
-        .erde-strip {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 80px;
-            background: #8B5E3C;
-            z-index: 2;
-        }
-        .erde-strip::before {
-            content: '';
-            position: absolute;
-            top: -20px; left: 0; right: 0;
-            height: 40px;
-            background: #6B8E23;
-            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-        }
+/* ===== QUIZ ===== */
+.quiz-bereich {
+  max-width: 500px;
+  margin: 1rem auto;
+  text-align: center;
+}
+.quiz-frage {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+}
+.quiz-frage.aktiv { display: flex; }
+.quiz-frage-text {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.3rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.quiz-frage-nr {
+  font-size: 0.9rem;
+  color: #999;
+}
+.quiz-antworten {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.quiz-antwort {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.8rem 1.2rem;
+  border: 3px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius-pill);
+  background: var(--weiss);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.quiz-antwort:hover { border-color: var(--accent); transform: scale(1.02); }
+.quiz-antwort.richtig {
+  background: #D1FAE5; border-color: #10B981; color: #065F46;
+  animation: juhu 0.4s ease;
+}
+.quiz-antwort.falsch {
+  background: #FEE2E2; border-color: #EF4444; color: #991B1B;
+  animation: wackeln 0.4s ease;
+}
+.quiz-antwort:disabled { cursor: default; opacity: 0.7; }
+.quiz-feedback {
+  font-weight: 700;
+  min-height: 2rem;
+  font-size: 1rem;
+}
+.quiz-weiter {
+  display: none;
+}
+.quiz-ergebnis {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+.quiz-ergebnis.aktiv { display: flex; }
+.quiz-ergebnis h2 {
+  font-size: 1.8rem;
+  color: var(--accent);
+}
+.quiz-punkte {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
 
-        /* ======================================================
-           VEGETABLE SECTIONS
-           ====================================================== */
-        .veggie-section {
-            padding: 80px 20px;
-            position: relative;
-        }
-        .veggie-section .container { position: relative; z-index: 2; }
+@keyframes juhu {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes wackeln {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
 
-        /* Section-specific bg colors */
-        #tomate { background: linear-gradient(180deg, #FFF0F0 0%, #FFE0E0 100%); }
-        #karotte { background: linear-gradient(180deg, #FFF5EB 0%, #FFE8D0 100%); }
-        #erbsen { background: linear-gradient(180deg, #EDFFF0 0%, #D0FFD8 100%); }
-        #gurke { background: linear-gradient(180deg, #E8FFF0 0%, #C8F0D8 100%); }
+/* ===== WATER GAME ===== */
+.wasser-spiel {
+  max-width: 400px;
+  margin: 1rem auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.wasser-anleitung {
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 1rem;
+  background: var(--weiss);
+  border-radius: var(--radius-card);
+}
+.wasser-behaelter {
+  width: 120px;
+  height: 260px;
+  background: rgba(255,255,255,0.5);
+  border: 4px solid var(--accent);
+  border-radius: 30% 30% 40% 40%;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.wasser-fuellstand {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(180deg, #7DD3FC, #2EBFE9, #0EA5E9);
+  transition: height 0.3s ease;
+  border-radius: 0 0 35% 35%;
+}
+.wasser-fuellstand::before {
+  content: '';
+  position: absolute; top: -4px; left: 0; right: 0;
+  height: 8px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50%;
+}
+.wasser-prozent {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2rem;
+  color: var(--accent);
+}
+.wasser-tropfen-bereich {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+  max-width: 300px;
+}
+.wasser-tropfen {
+  width: 48px; height: 48px;
+  background: radial-gradient(circle at 35% 35%, #BAE6FD, #38BDF8, #0284C7);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  cursor: pointer;
+  border: none;
+  transition: transform var(--transition);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+}
+.wasser-tropfen:hover { transform: scale(1.15); }
+.wasser-tropfen:active { transform: scale(0.9); }
+.wasser-tropfen.verbraucht {
+  opacity: 0.2;
+  pointer-events: none;
+  transform: scale(0.5);
+}
 
-        /* Step number colors per section */
-        #tomate .step-num { background: var(--rot); box-shadow: 0 3px 0 0 #B33; }
-        #karotte .step-num { background: var(--orange); box-shadow: 0 3px 0 0 #CC5530; }
-        #erbsen .step-num { background: var(--gruen-dunkel); box-shadow: 0 3px 0 0 #007830; }
-        #gurke .step-num { background: #2D8B46; box-shadow: 0 3px 0 0 #1A5C30; }
+/* ===== ERBSEN MULTI-BUBBLE ===== */
+.erbsen-hallo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.erbsen-sprechblase {
+  background: var(--weiss);
+  border-radius: var(--radius-card);
+  padding: 1rem 1.2rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.erbsen-sprechblase strong {
+  color: var(--accent);
+}
 
-        #tomate .fun-fact { border-left-color: var(--rot); }
-        #karotte .fun-fact { border-left-color: var(--orange); }
-        #erbsen .fun-fact { border-left-color: var(--gruen-dunkel); }
-        #gurke .fun-fact { border-left-color: #2D8B46; }
+/* ===== CONFETTI CANVAS ===== */
+#konfetti-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
 
-        /* ======================================================
-           EXPERIMENT HIGHLIGHT (Carrot Regrow)
-           ====================================================== */
-        .experiment-highlight {
-            background: linear-gradient(135deg, var(--orange) 0%, #FF9060 100%);
-            border-radius: 32px;
-            padding: 40px 28px;
-            margin: var(--gap) 0;
-            color: #fff;
-            text-align: center;
-            box-shadow: 0 8px 0 0 #CC5530, 0 4px 24px rgba(255,112,64,0.3);
-        }
-        .experiment-highlight h3 {
-            font-size: 2em;
-            margin-bottom: 0.2em;
-        }
-        .experiment-highlight .exp-subtitle {
-            font-size: 1.1em;
-            opacity: 0.9;
-            margin-bottom: 1.5em;
-        }
-        .exp-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-        }
-        .exp-step {
-            background: rgba(255,255,255,0.95);
-            color: #333;
-            border-radius: 20px;
-            padding: 24px 16px;
-            text-align: center;
-            box-shadow: 0 4px 0 0 rgba(0,0,0,0.1);
-            transition: transform var(--transition);
-        }
-        .exp-step:hover { transform: translateY(-4px) scale(1.04); }
-        .exp-step .exp-step-num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: var(--orange);
-            color: #fff;
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-        .exp-step .exp-emoji { font-size: 3em; display: block; margin-bottom: 8px; }
-        .exp-step p { font-size: 0.95em; font-weight: 700; }
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .charakter-animation { animation: none; }
+  .ansicht { transition: none; }
+  .flip-karte-inner { transition: none; }
+  .dia-pfeil, .garten-karte, .btn-3d, .tab-btn { transition: none; }
+}
 
-        /* ======================================================
-           COTTON BALL EXPERIMENT (Peas)
-           ====================================================== */
-        .experiment-green {
-            background: linear-gradient(135deg, var(--gruen-dunkel) 0%, #40C060 100%);
-            border-radius: 32px;
-            padding: 40px 28px;
-            margin: var(--gap) 0;
-            color: #fff;
-            text-align: center;
-            box-shadow: 0 8px 0 0 #007830, 0 4px 24px rgba(0,171,78,0.3);
-        }
-        .experiment-green h3 { font-size: 2em; margin-bottom: 0.2em; }
-        .experiment-green .exp-subtitle { font-size: 1.1em; opacity: 0.9; margin-bottom: 1.5em; }
+/* ===== RESPONSIVE 600px ===== */
+@media (max-width: 600px) {
+  html { font-size: 16px; }
+  .garten-titel { font-size: 1.6rem; }
+  .garten-raster { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .tab-leiste { justify-content: flex-start; flex-wrap: nowrap; }
+  .tab-btn { font-size: 0.75rem; padding: 0.4rem 0.8rem; }
+  .charakter-gross { transform: scale(1.2); }
+  .karten-raster { grid-template-columns: 1fr; }
+  .welt-header h1 { font-size: 1.4rem; }
+  .zurueck-btn { width: 40px; height: 40px; font-size: 1rem; }
+}
 
-        /* ======================================================
-           QUIZ SECTION
-           ====================================================== */
-        #quiz {
-            background: linear-gradient(180deg, #F5EDFF 0%, #EDE0FF 50%, #FFF0F8 100%);
-            padding: 80px 20px;
-        }
-        .quiz-card {
-            background: var(--weiss);
-            border-radius: var(--radius-card);
-            padding: 36px 28px;
-            margin-bottom: 24px;
-            box-shadow: 0 6px 0 0 var(--schatten), 0 2px 12px var(--schatten);
-            transition: transform var(--transition);
-            border-left: 8px solid var(--lila);
-        }
-        .quiz-card[data-veg="tomate"] { border-left-color: var(--rot); }
-        .quiz-card[data-veg="karotte"] { border-left-color: var(--orange); }
-        .quiz-card[data-veg="erbsen"] { border-left-color: var(--gruen-dunkel); }
-        .quiz-card[data-veg="gurke"] { border-left-color: #2D8B46; }
-        .quiz-card[data-veg="mix"] { border-left-color: var(--lila); }
-
-        .quiz-card .q-emoji { font-size: 2.5em; display: block; margin-bottom: 10px; }
-        .quiz-card .q-text {
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.3em;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .quiz-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
-        .quiz-opt {
-            font-family: 'Nunito', sans-serif;
-            font-size: 1.05em;
-            font-weight: 800;
-            padding: 16px 20px;
-            border: 4px solid #E8E0F0;
-            border-radius: var(--radius-pill);
-            background: #FAFAFF;
-            cursor: pointer;
-            transition: all var(--transition);
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .quiz-opt:hover {
-            transform: scale(1.05);
-            border-color: var(--lila);
-            background: #F0E8FF;
-        }
-        .quiz-opt.correct {
-            background: #D4FFDC;
-            border-color: var(--gruen-dunkel);
-            animation: pop 0.4s ease;
-        }
-        .quiz-opt.wrong {
-            background: #FFF0E0;
-            border-color: var(--orange);
-            animation: shake 0.4s ease;
-        }
-        .quiz-feedback {
-            margin-top: 16px;
-            padding: 16px 20px;
-            border-radius: 16px;
-            font-weight: 800;
-            font-size: 1.1em;
-            display: none;
-            text-align: center;
-        }
-        .quiz-feedback.show { display: block; }
-        .quiz-feedback.yay { background: #D4FFDC; color: #006620; }
-        .quiz-feedback.try { background: #FFF5E0; color: #8B6500; }
-        .quiz-score {
-            text-align: center;
-            margin-top: 32px;
-            padding: 32px;
-            background: var(--weiss);
-            border-radius: var(--radius-card);
-            box-shadow: 0 6px 0 0 var(--schatten), 0 2px 12px var(--schatten);
-            display: none;
-        }
-        .quiz-score.show { display: block; }
-        .quiz-score .score-emoji { font-size: 5em; display: block; margin-bottom: 10px; }
-        .quiz-score .score-text { font-family: 'Fredoka One', cursive; font-size: 2em; }
-        .quiz-score .score-sub { font-size: 1.1em; margin-top: 8px; }
-        .quiz-progress {
-            text-align: center;
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.2em;
-            color: var(--lila);
-            margin-bottom: 20px;
-        }
-        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.12); } 100% { transform: scale(1); } }
-        @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-
-        /* ======================================================
-           CHECKLISTE SECTION
-           ====================================================== */
-        #checkliste {
-            background: linear-gradient(180deg, #FFFDE8 0%, #FFF8C4 100%);
-            padding: 80px 20px;
-        }
-        .check-group {
-            margin-bottom: 32px;
-        }
-        .check-group-title {
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.5em;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .check-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 20px;
-            background: var(--weiss);
-            border-radius: 16px;
-            margin-bottom: 10px;
-            box-shadow: 0 3px 0 0 var(--schatten), 0 1px 6px var(--schatten);
-            cursor: pointer;
-            transition: transform var(--transition), background var(--transition);
-            user-select: none;
-            -webkit-user-select: none;
-            font-weight: 700;
-            min-height: 60px;
-        }
-        .check-item:hover { transform: scale(1.02); }
-        .check-item.done { background: #E8FFE8; text-decoration: line-through; opacity: 0.7; }
-        .check-box {
-            width: 36px; height: 36px;
-            border-radius: 10px;
-            border: 4px solid #ccc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3em;
-            flex-shrink: 0;
-            transition: all var(--transition);
-        }
-        .check-item.done .check-box { background: var(--gruen); border-color: var(--gruen-dunkel); }
-        .check-item.done .check-box::after { content: '✓'; color: #fff; font-weight: 900; }
-        .check-group[data-veg="tomate"] .check-group-title { color: var(--rot); }
-        .check-group[data-veg="karotte"] .check-group-title { color: var(--orange); }
-        .check-group[data-veg="erbsen"] .check-group-title { color: var(--gruen-dunkel); }
-        .check-group[data-veg="gurke"] .check-group-title { color: #2D8B46; }
-
-        /* ======================================================
-           STICKY BOTTOM NAV
-           ====================================================== */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-top: 3px solid #eee;
-            z-index: 1000;
-            padding: 6px 0 max(6px, env(safe-area-inset-bottom));
-        }
-        .bottom-nav-inner {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 6px 10px;
-            border-radius: 16px;
-            transition: all var(--transition);
-            min-width: 60px;
-            min-height: 60px;
-            font-size: 2em;
-        }
-        .nav-btn:hover, .nav-btn:focus-visible {
-            transform: scale(1.15);
-            background: rgba(0,0,0,0.04);
-        }
-        .nav-btn:active { transform: scale(0.95); }
-        .nav-btn .nav-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: transparent;
-            transition: background var(--transition);
-        }
-        .nav-btn.active .nav-dot { background: var(--lila); }
-
-        /* ======================================================
-           CONFETTI CANVAS
-           ====================================================== */
-        #confetti-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        /* ======================================================
-           RESPONSIVE
-           ====================================================== */
-        @media (max-width: 700px) {
-            .hero-title { font-size: 2.4em; }
-            .hero-subtitle { font-size: 1.1em; }
-            .hero-cards { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-            .hero-card .char-emoji { font-size: 3em; }
-            .section-heading .emoji-anchor { font-size: 3em; }
-            .section-heading h2 { font-size: 1.8em; }
-            .steps-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
-            .exp-steps { grid-template-columns: 1fr 1fr; }
-            .quiz-options { grid-template-columns: 1fr; }
-            .veggie-section { padding: 60px 16px; }
-            body { font-size: 18px; }
-            .fun-fact { flex-direction: column; text-align: center; }
-        }
-        @media (max-width: 400px) {
-            .hero-cards { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .steps-grid { grid-template-columns: 1fr; }
-            .exp-steps { grid-template-columns: 1fr; }
-        }
-
-        /* ===== REDUCED MOTION ===== */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* Space for bottom nav */
-        body { padding-bottom: 80px; }
-
-        /* Scroll reveal */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+/* ===== RESPONSIVE 400px ===== */
+@media (max-width: 400px) {
+  html { font-size: 15px; }
+  .garten-raster { gap: 0.7rem; }
+  .garten-karte { padding: 1rem 0.5rem; }
+  .diashow { padding: 1rem; }
+  .sprechblase { padding: 1rem; font-size: 1rem; }
+}
+</style>
 </head>
 <body>
 
-<!-- ======================================================
-     CONFETTI CANVAS
-     ====================================================== -->
-<canvas id="confetti-canvas"></canvas>
+<!-- CONFETTI CANVAS -->
+<canvas id="konfetti-canvas"></canvas>
 
-<!-- ======================================================
-     DECKBLATT / HERO
-     ====================================================== -->
-<section class="deckblatt" id="start">
-    <!-- Wolken -->
-    <div class="wolken">
-        <div class="wolke"></div>
-        <div class="wolke"></div>
-        <div class="wolke"></div>
-    </div>
-
-    <!-- Sonne -->
-    <div class="sonne" aria-hidden="true">
-        <div class="auge l"></div>
-        <div class="auge r"></div>
-        <div class="mund"></div>
-    </div>
-
-    <h1 class="hero-title">Unser Gemuese-Garten!</h1>
-    <p class="hero-subtitle">Klick auf ein Gemuese und lerne!</p>
-
-    <div class="hero-cards">
-        <a href="#tomate" class="hero-card" aria-label="Tomate">
-            <span class="char-emoji" aria-hidden="true">🍅</span>
-            <span class="char-name">Tomate</span>
-        </a>
-        <a href="#karotte" class="hero-card" aria-label="Karotte">
-            <span class="char-emoji" aria-hidden="true">🥕</span>
-            <span class="char-name">Karotte</span>
-        </a>
-        <a href="#erbsen" class="hero-card" aria-label="Erbsen">
-            <span class="char-emoji" aria-hidden="true">🫛</span>
-            <span class="char-name">Erbsen</span>
-        </a>
-        <a href="#gurke" class="hero-card" aria-label="Gurke">
-            <span class="char-emoji" aria-hidden="true">🥒</span>
-            <span class="char-name">Gurke</span>
-        </a>
-    </div>
-
-    <div class="erde-strip" aria-hidden="true"></div>
+<!-- ===== GARTEN (Landing) ===== -->
+<section id="garten" class="ansicht aktiv">
+  <h1 class="garten-titel">Unser Gemuese-Garten!</h1>
+  <p class="garten-untertitel">Lerne unsere Gemuese-Freunde kennen!</p>
+  <div class="garten-raster">
+    <!-- Tina Tomate -->
+    <a class="garten-karte" href="#welt-tomate" data-link>
+      <div class="charakter tina charakter-animation">
+        <div class="tina-stiel"></div>
+        <div class="tina-blatt"></div>
+        <div class="tina-koerper">
+          <div class="auge links"></div>
+          <div class="auge rechts"></div>
+          <div class="tina-mund"></div>
+          <div class="tina-wange links"></div>
+          <div class="tina-wange rechts"></div>
+        </div>
+      </div>
+      <span class="garten-karte-name">Tina Tomate</span>
+    </a>
+    <!-- Karlo Karotte -->
+    <a class="garten-karte" href="#welt-karotte" data-link>
+      <div class="charakter karlo charakter-animation" style="animation-delay:0.3s">
+        <div class="karlo-haar"></div>
+        <div class="karlo-haar"></div>
+        <div class="karlo-haar"></div>
+        <div class="karlo-koerper">
+          <div class="auge links"></div>
+          <div class="auge rechts"></div>
+          <div class="karlo-mund"></div>
+          <div class="karlo-wange links"></div>
+          <div class="karlo-wange rechts"></div>
+        </div>
+      </div>
+      <span class="garten-karte-name">Karlo Karotte</span>
+    </a>
+    <!-- Erbsen-Bande -->
+    <a class="garten-karte" href="#welt-erbsen" data-link>
+      <div class="charakter erbsen charakter-animation" style="animation-delay:0.6s">
+        <div class="schote">
+          <div class="erbse">
+            <div class="erbse-auge links"></div>
+            <div class="erbse-auge rechts"></div>
+            <div class="erbse-mund"></div>
+          </div>
+          <div class="erbse">
+            <div class="erbse-auge links"></div>
+            <div class="erbse-auge rechts"></div>
+            <div class="erbse-mund"></div>
+          </div>
+          <div class="erbse">
+            <div class="erbse-auge links"></div>
+            <div class="erbse-auge rechts"></div>
+            <div class="erbse-mund"></div>
+          </div>
+        </div>
+      </div>
+      <span class="garten-karte-name">Die Erbsen-Bande</span>
+    </a>
+    <!-- Gustav Gurke -->
+    <a class="garten-karte" href="#welt-gurke" data-link>
+      <div class="charakter gustav charakter-animation" style="animation-delay:0.9s">
+        <div class="gustav-koerper">
+          <div class="gustav-noppe"></div>
+          <div class="gustav-noppe"></div>
+          <div class="gustav-noppe"></div>
+          <div class="gustav-noppe"></div>
+          <div class="gustav-noppe"></div>
+          <div class="auge links"></div>
+          <div class="auge rechts"></div>
+          <div class="gustav-mund"></div>
+          <div class="gustav-wange links"></div>
+          <div class="gustav-wange rechts"></div>
+        </div>
+      </div>
+      <span class="garten-karte-name">Gustav Gurke</span>
+    </a>
+  </div>
 </section>
 
-<!-- ======================================================
-     TOMATE
-     ====================================================== -->
-<section class="veggie-section" id="tomate">
-    <div class="container">
-        <div class="section-heading reveal">
-            <span class="emoji-anchor" aria-hidden="true">🍅</span>
-            <h2>Die Tomate</h2>
-            <p>Rot, rund und so lecker!</p>
-        </div>
-
-        <!-- Wachstumsschritte -->
-        <h3 style="font-family:'Fredoka One',cursive; font-size:1.5em; text-align:center; margin-bottom:20px; color:var(--rot);" class="reveal">So waechst eine Tomate:</h3>
-        <div class="steps-grid reveal">
-            <div class="step-card">
-                <span class="step-num">1</span>
-                <span class="step-emoji">🌱</span>
-                <p>Lege einen Samen in die Erde.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">2</span>
-                <span class="step-emoji">💧</span>
-                <p>Giesse ihn mit Wasser.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">3</span>
-                <span class="step-emoji">☀️</span>
-                <p>Die Sonne hilft beim Wachsen.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">4</span>
-                <span class="step-emoji">🌿</span>
-                <p>Eine kleine Pflanze waechst.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">5</span>
-                <span class="step-emoji">🌼</span>
-                <p>Gelbe Blueten kommen.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">6</span>
-                <span class="step-emoji">🍅</span>
-                <p>Rote Tomaten! Lecker!</p>
-            </div>
-        </div>
-
-        <!-- Fun Facts -->
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">🤓</span>
-            <p>Tomaten sind eigentlich Fruechte! Aber wir essen sie wie Gemuese.</p>
-        </div>
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">🌍</span>
-            <p>Tomaten kommen aus Suedamerika. Sie reisten mit Schiffen nach Europa!</p>
-        </div>
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">🎨</span>
-            <p>Es gibt gelbe, orange und sogar schwarze Tomaten!</p>
-        </div>
-
-        <!-- Video -->
-        <h3 style="font-family:'Fredoka One',cursive; font-size:1.5em; text-align:center; margin:32px 0 16px; color:var(--rot);" class="reveal">🎬 Schau ein Video!</h3>
-        <div class="video-wrap reveal">
-            <iframe src="https://www.youtube-nocookie.com/embed/yKpOPizFMaQ" title="Tomaten-Video" sandbox="allow-scripts allow-same-origin allow-popups" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
+<!-- ===== WELT: TOMATE ===== -->
+<section id="welt-tomate" class="ansicht welt-ansicht" data-thema="tomate">
+  <button class="zurueck-btn" data-zurueck aria-label="Zurueck zum Garten">&#8592;</button>
+  <div class="welt-header">
+    <div class="charakter tina charakter-gross charakter-animation">
+      <div class="tina-stiel"></div>
+      <div class="tina-blatt"></div>
+      <div class="tina-koerper">
+        <div class="auge links"></div>
+        <div class="auge rechts"></div>
+        <div class="tina-mund"></div>
+        <div class="tina-wange links"></div>
+        <div class="tina-wange rechts"></div>
+      </div>
     </div>
+    <h1>Tina Tomate</h1>
+  </div>
+  <nav class="tab-leiste" data-tabs="tomate">
+    <button class="tab-btn aktiv" data-tab="hallo">Hallo!</button>
+    <button class="tab-btn" data-tab="wachsen">So wachse ich</button>
+    <button class="tab-btn" data-tab="fakten">Wusstest du?</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
+  </nav>
+
+  <!-- Hallo Tab -->
+  <div class="tab-inhalt aktiv" data-tab-inhalt="hallo" data-owner="tomate">
+    <div class="sprechblase">Hallo! Ich bin Tina Tomate! Ich bin rot und rund. Ich komme ganz weit weg - aus Suedamerika!</div>
+    <div class="steckbrief">
+      <h3>Steckbrief</h3>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Farbe:</span><span>Rot (und manchmal gelb oder orange!)</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Geschmack:</span><span>Suess und saftig</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Geheimnis:</span><span>Ich bin eigentlich eine Frucht!</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Superkraft:</span><span>Ich habe viel Vitamin C</span></div>
+    </div>
+  </div>
+
+  <!-- Wachsen Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="wachsen" data-owner="tomate">
+    <div class="diashow" data-diashow>
+      <div class="dia aktiv" data-dia="0">
+        <div class="dia-nummer">1</div>
+        <div class="dia-text">Lege einen Samen in die Erde.</div>
+      </div>
+      <div class="dia" data-dia="1">
+        <div class="dia-nummer">2</div>
+        <div class="dia-text">Giesse ihn mit Wasser.</div>
+      </div>
+      <div class="dia" data-dia="2">
+        <div class="dia-nummer">3</div>
+        <div class="dia-text">Die Sonne hilft beim Wachsen.</div>
+      </div>
+      <div class="dia" data-dia="3">
+        <div class="dia-nummer">4</div>
+        <div class="dia-text">Eine kleine Pflanze waechst.</div>
+      </div>
+      <div class="dia" data-dia="4">
+        <div class="dia-nummer">5</div>
+        <div class="dia-text">Gelbe Blueten kommen.</div>
+      </div>
+      <div class="dia" data-dia="5">
+        <div class="dia-nummer">6</div>
+        <div class="dia-text">Rote Tomaten! Zeit zum Ernten!</div>
+        <div class="dia-video">
+          <iframe src="https://www.youtube-nocookie.com/embed/yKpOPizFMaQ" title="Tomate Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </div>
+      <div class="dia-nav">
+        <button class="dia-pfeil" data-dia-zurueck aria-label="Zurueck">&#8592;</button>
+        <div class="dia-punkte">
+          <div class="dia-punkt aktiv"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+        </div>
+        <button class="dia-pfeil" data-dia-vor aria-label="Vor">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fakten Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="fakten" data-owner="tomate">
+    <div class="karten-raster">
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 1</div>
+          <div class="flip-karte-hinten">Tomaten sind eigentlich Fruechte! Aber wir essen sie wie Gemuese.</div>
+        </div>
+      </div>
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 2</div>
+          <div class="flip-karte-hinten">Tomaten reisten mit Schiffen von Suedamerika nach Europa.</div>
+        </div>
+      </div>
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 3</div>
+          <div class="flip-karte-hinten">Es gibt rote, gelbe, gruene und sogar schwarze Tomaten!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="quiz" data-owner="tomate">
+    <div class="quiz-bereich" data-quiz="tomate">
+      <div class="quiz-frage aktiv" data-quiz-frage="0">
+        <div class="quiz-frage-nr">Frage 1 von 3</div>
+        <div class="quiz-frage-text">Welche Farbe hat eine reife Tomate?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">Blau</button>
+          <button class="quiz-antwort" data-korrekt="1">Rot</button>
+          <button class="quiz-antwort" data-korrekt="0">Lila</button>
+          <button class="quiz-antwort" data-korrekt="0">Schwarz</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-frage" data-quiz-frage="1">
+        <div class="quiz-frage-nr">Frage 2 von 3</div>
+        <div class="quiz-frage-text">Woher kommt die Tomate?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">Vom Mond</button>
+          <button class="quiz-antwort" data-korrekt="1">Aus Suedamerika</button>
+          <button class="quiz-antwort" data-korrekt="0">Vom Nordpol</button>
+          <button class="quiz-antwort" data-korrekt="0">Aus der Wueste</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-frage" data-quiz-frage="2">
+        <div class="quiz-frage-nr">Frage 3 von 3</div>
+        <div class="quiz-frage-text">Ist die Tomate eine Frucht oder Gemuese?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">Gemuese</button>
+          <button class="quiz-antwort" data-korrekt="1">Frucht!</button>
+          <button class="quiz-antwort" data-korrekt="0">Tier</button>
+          <button class="quiz-antwort" data-korrekt="0">Spielzeug</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-ergebnis" data-quiz-ergebnis>
+        <h2>Super gemacht!</h2>
+        <div class="quiz-punkte"></div>
+        <button class="btn-3d" data-quiz-neustart>Nochmal spielen</button>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ======================================================
-     KAROTTE
-     ====================================================== -->
-<section class="veggie-section" id="karotte">
-    <div class="container">
-        <div class="section-heading reveal">
-            <span class="emoji-anchor" aria-hidden="true">🥕</span>
-            <h2>Die Karotte</h2>
-            <p>Orange, knackig und gut fuer die Augen!</p>
-        </div>
-
-        <!-- STAR FEATURE: Karotten-Nachwachs-Experiment -->
-        <div class="experiment-highlight reveal">
-            <h3>⭐ Das grosse Karotten-Experiment! ⭐</h3>
-            <p class="exp-subtitle">Lass eine Karotte nachwachsen! Du brauchst nur Wasser!</p>
-
-            <div class="exp-steps">
-                <div class="exp-step">
-                    <span class="exp-step-num">1</span>
-                    <span class="exp-emoji">🥕</span>
-                    <p>Schneide das obere Stueck ab. (Ein Erwachsener hilft!)</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">2</span>
-                    <span class="exp-emoji">🍽️</span>
-                    <p>Lege es auf einen kleinen Teller.</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">3</span>
-                    <span class="exp-emoji">💧</span>
-                    <p>Giesse etwas Wasser dazu. Nicht zu viel!</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">4</span>
-                    <span class="exp-emoji">☀️</span>
-                    <p>Stelle es ans Fenster in die Sonne.</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">5</span>
-                    <span class="exp-emoji">⏰</span>
-                    <p>Warte ein paar Tage. Giesse jeden Tag!</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">6</span>
-                    <span class="exp-emoji">🌿</span>
-                    <p>Gruene Blaetter wachsen! Toll!</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Wachstumsschritte -->
-        <h3 style="font-family:'Fredoka One',cursive; font-size:1.5em; text-align:center; margin-bottom:20px; color:var(--orange);" class="reveal">So waechst eine Karotte:</h3>
-        <div class="steps-grid reveal">
-            <div class="step-card">
-                <span class="step-num">1</span>
-                <span class="step-emoji">🌱</span>
-                <p>Kleine Samen in die Erde.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">2</span>
-                <span class="step-emoji">💧</span>
-                <p>Wasser und Sonne geben.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">3</span>
-                <span class="step-emoji">🌿</span>
-                <p>Gruenes Kraut waechst hoch.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">4</span>
-                <span class="step-emoji">🥕</span>
-                <p>Die Karotte waechst unter der Erde!</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">5</span>
-                <span class="step-emoji">🤚</span>
-                <p>Ziehe sie heraus. Fertig!</p>
-            </div>
-        </div>
-
-        <!-- Fun Facts -->
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">🐰</span>
-            <p>Hasen lieben Karotten! Und du auch?</p>
-        </div>
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">👀</span>
-            <p>Karotten helfen deinen Augen! Sie haben Vitamin A.</p>
-        </div>
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">🟣</span>
-            <p>Frueher waren Karotten lila! Erst spaeter wurden sie orange.</p>
-        </div>
-
-        <!-- Video -->
-        <h3 style="font-family:'Fredoka One',cursive; font-size:1.5em; text-align:center; margin:32px 0 16px; color:var(--orange);" class="reveal">🎬 Schau ein Video!</h3>
-        <div class="video-wrap reveal">
-            <iframe src="https://www.youtube-nocookie.com/embed/8nBeWCL1wNI" title="Karotten-Video" sandbox="allow-scripts allow-same-origin allow-popups" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
+<!-- ===== WELT: KAROTTE ===== -->
+<section id="welt-karotte" class="ansicht welt-ansicht" data-thema="karotte">
+  <button class="zurueck-btn" data-zurueck aria-label="Zurueck zum Garten">&#8592;</button>
+  <div class="welt-header">
+    <div class="charakter karlo charakter-gross charakter-animation">
+      <div class="karlo-haar"></div>
+      <div class="karlo-haar"></div>
+      <div class="karlo-haar"></div>
+      <div class="karlo-koerper">
+        <div class="auge links"></div>
+        <div class="auge rechts"></div>
+        <div class="karlo-mund"></div>
+        <div class="karlo-wange links"></div>
+        <div class="karlo-wange rechts"></div>
+      </div>
     </div>
+    <h1>Karlo Karotte</h1>
+  </div>
+  <nav class="tab-leiste" data-tabs="karotte">
+    <button class="tab-btn aktiv" data-tab="hallo">Hallo!</button>
+    <button class="tab-btn" data-tab="experiment">Experiment!</button>
+    <button class="tab-btn" data-tab="wachsen">So wachse ich</button>
+    <button class="tab-btn" data-tab="fakten">Wusstest du?</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
+  </nav>
+
+  <!-- Hallo Tab -->
+  <div class="tab-inhalt aktiv" data-tab-inhalt="hallo" data-owner="karotte">
+    <div class="sprechblase">Hey! Ich bin Karlo Karotte. Ich verstecke mich am liebsten unter der Erde!</div>
+    <div class="steckbrief">
+      <h3>Steckbrief</h3>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Farbe:</span><span>Orange (aber frueher war ich lila!)</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Geschmack:</span><span>Suess und knackig</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Geheimnis:</span><span>Ich bin gut fuer deine Augen!</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Superkraft:</span><span>Vitamin A</span></div>
+    </div>
+  </div>
+
+  <!-- Experiment Tab (STAR) -->
+  <div class="tab-inhalt" data-tab-inhalt="experiment" data-owner="karotte">
+    <h2 style="text-align:center;color:var(--accent);margin-bottom:0.5rem;">Karotten-Nachwachs-Experiment!</h2>
+    <div class="diashow" data-diashow>
+      <div class="dia aktiv" data-dia="0">
+        <div class="dia-nummer">1</div>
+        <div class="dia-text">Schneide das obere Stueck einer Karotte ab. (Mama oder Papa helfen!)</div>
+      </div>
+      <div class="dia" data-dia="1">
+        <div class="dia-nummer">2</div>
+        <div class="dia-text">Lege das Stueck auf einen kleinen Teller.</div>
+      </div>
+      <div class="dia" data-dia="2">
+        <div class="dia-nummer">3</div>
+        <div class="dia-text">Giesse ein bisschen Wasser dazu.</div>
+      </div>
+      <div class="dia" data-dia="3">
+        <div class="dia-nummer">4</div>
+        <div class="dia-text">Stelle den Teller ans Fenster.</div>
+      </div>
+      <div class="dia" data-dia="4">
+        <div class="dia-nummer">5</div>
+        <div class="dia-text">Warte ein paar Tage und giesse jeden Tag frisches Wasser.</div>
+      </div>
+      <div class="dia" data-dia="5">
+        <div class="dia-nummer">6</div>
+        <div class="dia-text">Gruene Blaetter wachsen heraus! Toll!</div>
+      </div>
+      <div class="dia-nav">
+        <button class="dia-pfeil" data-dia-zurueck aria-label="Zurueck">&#8592;</button>
+        <div class="dia-punkte">
+          <div class="dia-punkt aktiv"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+        </div>
+        <button class="dia-pfeil" data-dia-vor aria-label="Vor">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wachsen Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="wachsen" data-owner="karotte">
+    <div class="diashow" data-diashow>
+      <div class="dia aktiv" data-dia="0">
+        <div class="dia-nummer">1</div>
+        <div class="dia-text">Winzige Samen in die Erde streuen.</div>
+      </div>
+      <div class="dia" data-dia="1">
+        <div class="dia-nummer">2</div>
+        <div class="dia-text">Vorsichtig mit Wasser bespritzen.</div>
+      </div>
+      <div class="dia" data-dia="2">
+        <div class="dia-nummer">3</div>
+        <div class="dia-text">Gruenes Kraut waechst nach oben.</div>
+      </div>
+      <div class="dia" data-dia="3">
+        <div class="dia-nummer">4</div>
+        <div class="dia-text">Unter der Erde waechst die Karotte!</div>
+      </div>
+      <div class="dia" data-dia="4">
+        <div class="dia-nummer">5</div>
+        <div class="dia-text">Am Kraut ziehen - da ist sie!</div>
+        <div class="dia-video">
+          <iframe src="https://www.youtube-nocookie.com/embed/8nBeWCL1wNI" title="Karotte Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </div>
+      <div class="dia-nav">
+        <button class="dia-pfeil" data-dia-zurueck aria-label="Zurueck">&#8592;</button>
+        <div class="dia-punkte">
+          <div class="dia-punkt aktiv"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+        </div>
+        <button class="dia-pfeil" data-dia-vor aria-label="Vor">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fakten Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="fakten" data-owner="karotte">
+    <div class="karten-raster">
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 1</div>
+          <div class="flip-karte-hinten">Frueher waren alle Karotten lila! Orange kam erst spaeter.</div>
+        </div>
+      </div>
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 2</div>
+          <div class="flip-karte-hinten">Karotten helfen deinen Augen. Sie haben Vitamin A.</div>
+        </div>
+      </div>
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 3</div>
+          <div class="flip-karte-hinten">Hasen lieben Karotten - und du bestimmt auch!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="quiz" data-owner="karotte">
+    <div class="quiz-bereich" data-quiz="karotte">
+      <div class="quiz-frage aktiv" data-quiz-frage="0">
+        <div class="quiz-frage-nr">Frage 1 von 3</div>
+        <div class="quiz-frage-text">Wo waechst die Karotte?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">Am Baum</button>
+          <button class="quiz-antwort" data-korrekt="0">Auf dem Dach</button>
+          <button class="quiz-antwort" data-korrekt="1">Unter der Erde</button>
+          <button class="quiz-antwort" data-korrekt="0">Im Wasser</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-frage" data-quiz-frage="1">
+        <div class="quiz-frage-nr">Frage 2 von 3</div>
+        <div class="quiz-frage-text">Welches Vitamin hat die Karotte?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">Vitamin Z</button>
+          <button class="quiz-antwort" data-korrekt="1">Vitamin A</button>
+          <button class="quiz-antwort" data-korrekt="0">Vitamin 7</button>
+          <button class="quiz-antwort" data-korrekt="0">Vitamin Quatsch</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-frage" data-quiz-frage="2">
+        <div class="quiz-frage-nr">Frage 3 von 3</div>
+        <div class="quiz-frage-text">Welche Farbe hatten Karotten frueher?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="1">Lila!</button>
+          <button class="quiz-antwort" data-korrekt="0">Blau</button>
+          <button class="quiz-antwort" data-korrekt="0">Rosa</button>
+          <button class="quiz-antwort" data-korrekt="0">Weiss</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-ergebnis" data-quiz-ergebnis>
+        <h2>Super gemacht!</h2>
+        <div class="quiz-punkte"></div>
+        <button class="btn-3d" data-quiz-neustart>Nochmal spielen</button>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ======================================================
-     ERBSEN
-     ====================================================== -->
-<section class="veggie-section" id="erbsen">
-    <div class="container">
-        <div class="section-heading reveal">
-            <span class="emoji-anchor" aria-hidden="true">🫛</span>
-            <h2>Die Erbsen</h2>
-            <p>Klein, gruen und sie klettern!</p>
+<!-- ===== WELT: ERBSEN ===== -->
+<section id="welt-erbsen" class="ansicht welt-ansicht" data-thema="erbsen">
+  <button class="zurueck-btn" data-zurueck aria-label="Zurueck zum Garten">&#8592;</button>
+  <div class="welt-header">
+    <div class="charakter erbsen charakter-gross charakter-animation">
+      <div class="schote">
+        <div class="erbse">
+          <div class="erbse-auge links"></div>
+          <div class="erbse-auge rechts"></div>
+          <div class="erbse-mund"></div>
         </div>
-
-        <!-- Watteball-Experiment -->
-        <div class="experiment-green reveal">
-            <h3>🧪 Watteball-Experiment! 🧪</h3>
-            <p class="exp-subtitle">Lass Erbsen auf Watte keimen!</p>
-
-            <div class="exp-steps">
-                <div class="exp-step">
-                    <span class="exp-step-num">1</span>
-                    <span class="exp-emoji">☁️</span>
-                    <p>Lege Watte in ein Glas.</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">2</span>
-                    <span class="exp-emoji">🫛</span>
-                    <p>Lege 3 Erbsen auf die Watte.</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">3</span>
-                    <span class="exp-emoji">💧</span>
-                    <p>Mach die Watte nass.</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">4</span>
-                    <span class="exp-emoji">☀️</span>
-                    <p>Stelle das Glas ins Licht.</p>
-                </div>
-                <div class="exp-step">
-                    <span class="exp-step-num">5</span>
-                    <span class="exp-emoji">🌱</span>
-                    <p>Nach ein paar Tagen spriesst es!</p>
-                </div>
-            </div>
+        <div class="erbse">
+          <div class="erbse-auge links"></div>
+          <div class="erbse-auge rechts"></div>
+          <div class="erbse-mund"></div>
         </div>
-
-        <!-- Wachstumsschritte -->
-        <h3 style="font-family:'Fredoka One',cursive; font-size:1.5em; text-align:center; margin-bottom:20px; color:var(--gruen-dunkel);" class="reveal">So wachsen Erbsen:</h3>
-        <div class="steps-grid reveal">
-            <div class="step-card">
-                <span class="step-num">1</span>
-                <span class="step-emoji">🌱</span>
-                <p>Erbsen in die Erde legen.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">2</span>
-                <span class="step-emoji">💧</span>
-                <p>Wasser geben und warten.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">3</span>
-                <span class="step-emoji">🌿</span>
-                <p>Die Pflanze klettert hoch!</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">4</span>
-                <span class="step-emoji">🌸</span>
-                <p>Weisse Blueten kommen.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">5</span>
-                <span class="step-emoji">🫛</span>
-                <p>Erbsen in der Schote! Mmm!</p>
-            </div>
+        <div class="erbse">
+          <div class="erbse-auge links"></div>
+          <div class="erbse-auge rechts"></div>
+          <div class="erbse-mund"></div>
         </div>
-
-        <!-- Fun Facts -->
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">🧗</span>
-            <p>Erbsen koennen klettern! Sie halten sich mit Ranken fest.</p>
-        </div>
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">💪</span>
-            <p>Erbsen machen stark! Sie haben viel Protein.</p>
-        </div>
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">🏠</span>
-            <p>In einer Schote wohnen 5 bis 8 Erbsen zusammen.</p>
-        </div>
+      </div>
     </div>
+    <h1>Die Erbsen-Bande</h1>
+  </div>
+  <nav class="tab-leiste" data-tabs="erbsen">
+    <button class="tab-btn aktiv" data-tab="hallo">Hallo!</button>
+    <button class="tab-btn" data-tab="wachsen">So wachsen wir</button>
+    <button class="tab-btn" data-tab="experiment">Watte-Experiment</button>
+    <button class="tab-btn" data-tab="fakten">Wusstest du?</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
+  </nav>
+
+  <!-- Hallo Tab -->
+  <div class="tab-inhalt aktiv" data-tab-inhalt="hallo" data-owner="erbsen">
+    <div class="erbsen-hallo">
+      <div class="erbsen-sprechblase"><strong>Edda:</strong> Hallo! Ich bin Edda! Ich bin die Mutige!</div>
+      <div class="erbsen-sprechblase"><strong>Emil:</strong> Hi! Ich bin Emil! Ich klettere am liebsten!</div>
+      <div class="erbsen-sprechblase"><strong>Ella:</strong> Hallo! Ich bin Ella! Ich bin die Schnellste!</div>
+    </div>
+    <div class="steckbrief">
+      <h3>Steckbrief</h3>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Farbe:</span><span>Gruen und kugelrund</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Geschmack:</span><span>Suess und frisch</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Geheimnis:</span><span>Wir koennen klettern!</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Superkraft:</span><span>Ganz viel Eiweiss fuer starke Muskeln</span></div>
+    </div>
+  </div>
+
+  <!-- Wachsen Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="wachsen" data-owner="erbsen">
+    <div class="diashow" data-diashow>
+      <div class="dia aktiv" data-dia="0">
+        <div class="dia-nummer">1</div>
+        <div class="dia-text">Erbsen ueber Nacht in Wasser einweichen.</div>
+      </div>
+      <div class="dia" data-dia="1">
+        <div class="dia-nummer">2</div>
+        <div class="dia-text">In die Erde legen, 3 cm tief.</div>
+      </div>
+      <div class="dia" data-dia="2">
+        <div class="dia-nummer">3</div>
+        <div class="dia-text">Die Pflanze klettert nach oben!</div>
+      </div>
+      <div class="dia" data-dia="3">
+        <div class="dia-nummer">4</div>
+        <div class="dia-text">Weisse oder rosa Blueten kommen.</div>
+      </div>
+      <div class="dia" data-dia="4">
+        <div class="dia-nummer">5</div>
+        <div class="dia-text">Schoten wachsen - mit Erbsen drin!</div>
+      </div>
+      <div class="dia-nav">
+        <button class="dia-pfeil" data-dia-zurueck aria-label="Zurueck">&#8592;</button>
+        <div class="dia-punkte">
+          <div class="dia-punkt aktiv"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+        </div>
+        <button class="dia-pfeil" data-dia-vor aria-label="Vor">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Experiment Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="experiment" data-owner="erbsen">
+    <h2 style="text-align:center;color:var(--accent);margin-bottom:0.5rem;">Watte-Experiment!</h2>
+    <div class="diashow" data-diashow>
+      <div class="dia aktiv" data-dia="0">
+        <div class="dia-nummer">1</div>
+        <div class="dia-text">Lege Watte in ein Glas.</div>
+      </div>
+      <div class="dia" data-dia="1">
+        <div class="dia-nummer">2</div>
+        <div class="dia-text">Lege 3 Erbsen auf die Watte.</div>
+      </div>
+      <div class="dia" data-dia="2">
+        <div class="dia-nummer">3</div>
+        <div class="dia-text">Mach die Watte nass.</div>
+      </div>
+      <div class="dia" data-dia="3">
+        <div class="dia-nummer">4</div>
+        <div class="dia-text">Stelle das Glas ans Fenster.</div>
+      </div>
+      <div class="dia" data-dia="4">
+        <div class="dia-nummer">5</div>
+        <div class="dia-text">Nach ein paar Tagen spriesst es!</div>
+      </div>
+      <div class="dia-nav">
+        <button class="dia-pfeil" data-dia-zurueck aria-label="Zurueck">&#8592;</button>
+        <div class="dia-punkte">
+          <div class="dia-punkt aktiv"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+        </div>
+        <button class="dia-pfeil" data-dia-vor aria-label="Vor">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fakten Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="fakten" data-owner="erbsen">
+    <div class="karten-raster">
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 1</div>
+          <div class="flip-karte-hinten">Erbsen koennen klettern! Sie halten sich mit kleinen Ranken fest.</div>
+        </div>
+      </div>
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 2</div>
+          <div class="flip-karte-hinten">Erbsen machen stark! Sie haben ganz viel Eiweiss.</div>
+        </div>
+      </div>
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 3</div>
+          <div class="flip-karte-hinten">In einer Schote wohnen 5 bis 8 Erbsen zusammen.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="quiz" data-owner="erbsen">
+    <div class="quiz-bereich" data-quiz="erbsen">
+      <div class="quiz-frage aktiv" data-quiz-frage="0">
+        <div class="quiz-frage-nr">Frage 1 von 2</div>
+        <div class="quiz-frage-text">Was koennen Erbsenpflanzen?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">Fliegen</button>
+          <button class="quiz-antwort" data-korrekt="0">Singen</button>
+          <button class="quiz-antwort" data-korrekt="1">Klettern</button>
+          <button class="quiz-antwort" data-korrekt="0">Springen</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-frage" data-quiz-frage="1">
+        <div class="quiz-frage-nr">Frage 2 von 2</div>
+        <div class="quiz-frage-text">Wie viele Erbsen wohnen in einer Schote?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">100</button>
+          <button class="quiz-antwort" data-korrekt="1">5 bis 8</button>
+          <button class="quiz-antwort" data-korrekt="0">1</button>
+          <button class="quiz-antwort" data-korrekt="0">50</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-ergebnis" data-quiz-ergebnis>
+        <h2>Super gemacht!</h2>
+        <div class="quiz-punkte"></div>
+        <button class="btn-3d" data-quiz-neustart>Nochmal spielen</button>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ======================================================
-     GURKE
-     ====================================================== -->
-<section class="veggie-section" id="gurke">
-    <div class="container">
-        <div class="section-heading reveal">
-            <span class="emoji-anchor" aria-hidden="true">🥒</span>
-            <h2>Die Gurke</h2>
-            <p>Lang, gruen und voller Wasser!</p>
-        </div>
-
-        <!-- Wachstumsschritte -->
-        <h3 style="font-family:'Fredoka One',cursive; font-size:1.5em; text-align:center; margin-bottom:20px; color:#2D8B46;" class="reveal">So waechst eine Gurke:</h3>
-        <div class="steps-grid reveal">
-            <div class="step-card">
-                <span class="step-num">1</span>
-                <span class="step-emoji">🌱</span>
-                <p>Samen in warme Erde legen.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">2</span>
-                <span class="step-emoji">💧</span>
-                <p>Viel Wasser geben!</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">3</span>
-                <span class="step-emoji">🌿</span>
-                <p>Grosse Blaetter wachsen.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">4</span>
-                <span class="step-emoji">🌼</span>
-                <p>Gelbe Blueten bluehen.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">5</span>
-                <span class="step-emoji">🥒</span>
-                <p>Eine lange Gurke waechst!</p>
-            </div>
-        </div>
-
-        <!-- Fun Facts -->
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">💦</span>
-            <p>Gurken bestehen fast nur aus Wasser! 95 Prozent!</p>
-        </div>
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">🧊</span>
-            <p>Gurken sind immer kuehl. Daher sagt man "cool wie eine Gurke"!</p>
-        </div>
-        <div class="fun-fact reveal">
-            <span class="fact-emoji">📏</span>
-            <p>Gurken koennen so lang werden wie dein Arm!</p>
-        </div>
+<!-- ===== WELT: GURKE ===== -->
+<section id="welt-gurke" class="ansicht welt-ansicht" data-thema="gurke">
+  <button class="zurueck-btn" data-zurueck aria-label="Zurueck zum Garten">&#8592;</button>
+  <div class="welt-header">
+    <div class="charakter gustav charakter-gross charakter-animation">
+      <div class="gustav-koerper">
+        <div class="gustav-noppe"></div>
+        <div class="gustav-noppe"></div>
+        <div class="gustav-noppe"></div>
+        <div class="gustav-noppe"></div>
+        <div class="gustav-noppe"></div>
+        <div class="auge links"></div>
+        <div class="auge rechts"></div>
+        <div class="gustav-mund"></div>
+        <div class="gustav-wange links"></div>
+        <div class="gustav-wange rechts"></div>
+      </div>
     </div>
+    <h1>Gustav Gurke</h1>
+  </div>
+  <nav class="tab-leiste" data-tabs="gurke">
+    <button class="tab-btn aktiv" data-tab="hallo">Hallo!</button>
+    <button class="tab-btn" data-tab="wachsen">So wachse ich</button>
+    <button class="tab-btn" data-tab="spiel">Wasser-Spiel</button>
+    <button class="tab-btn" data-tab="fakten">Wusstest du?</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
+  </nav>
+
+  <!-- Hallo Tab -->
+  <div class="tab-inhalt aktiv" data-tab-inhalt="hallo" data-owner="gurke">
+    <div class="sprechblase">Cool. Ich bin Gustav. Ich bestehe fast nur aus Wasser. Ziemlich cool, oder?</div>
+    <div class="steckbrief">
+      <h3>Steckbrief</h3>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Farbe:</span><span>Dunkelgruen mit Noppen</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Geschmack:</span><span>Frisch und knackig</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Geheimnis:</span><span>Ich bin 95% Wasser!</span></div>
+      <div class="steckbrief-zeile"><span class="steckbrief-label">Superkraft:</span><span>Ich bin immer erfrischt</span></div>
+    </div>
+  </div>
+
+  <!-- Wachsen Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="wachsen" data-owner="gurke">
+    <div class="diashow" data-diashow>
+      <div class="dia aktiv" data-dia="0">
+        <div class="dia-nummer">1</div>
+        <div class="dia-text">Samen in warme Erde legen.</div>
+      </div>
+      <div class="dia" data-dia="1">
+        <div class="dia-nummer">2</div>
+        <div class="dia-text">Viel Wasser geben! Gurken sind durstig!</div>
+      </div>
+      <div class="dia" data-dia="2">
+        <div class="dia-nummer">3</div>
+        <div class="dia-text">Grosse Blaetter und Ranken wachsen.</div>
+      </div>
+      <div class="dia" data-dia="3">
+        <div class="dia-nummer">4</div>
+        <div class="dia-text">Gelbe Blueten bluehen.</div>
+      </div>
+      <div class="dia" data-dia="4">
+        <div class="dia-nummer">5</div>
+        <div class="dia-text">Eine lange Gurke waechst! Knack!</div>
+      </div>
+      <div class="dia-nav">
+        <button class="dia-pfeil" data-dia-zurueck aria-label="Zurueck">&#8592;</button>
+        <div class="dia-punkte">
+          <div class="dia-punkt aktiv"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+          <div class="dia-punkt"></div>
+        </div>
+        <button class="dia-pfeil" data-dia-vor aria-label="Vor">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wasser-Spiel Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="spiel" data-owner="gurke">
+    <div class="wasser-spiel" data-wasser-spiel>
+      <h2 style="color:var(--accent);">Wasser-Spiel!</h2>
+      <div class="wasser-anleitung">Hilf Gustav! Tippe auf die Wassertropfen um ihn zu fuellen. Er braucht 95 Prozent Wasser!</div>
+      <div class="wasser-prozent"><span data-wasser-zahl>0</span>%</div>
+      <div class="wasser-behaelter">
+        <div class="wasser-fuellstand" data-wasser-fuellstand style="height:0%"></div>
+      </div>
+      <div class="wasser-tropfen-bereich" data-wasser-tropfen-bereich></div>
+    </div>
+  </div>
+
+  <!-- Fakten Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="fakten" data-owner="gurke">
+    <div class="karten-raster">
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 1</div>
+          <div class="flip-karte-hinten">Gurken bestehen zu 95 Prozent aus Wasser!</div>
+        </div>
+      </div>
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 2</div>
+          <div class="flip-karte-hinten">Darum sagt man "cool wie eine Gurke"!</div>
+        </div>
+      </div>
+      <div class="flip-karte" data-flip>
+        <div class="flip-karte-inner">
+          <div class="flip-karte-vorne">Fakt 3</div>
+          <div class="flip-karte-hinten">Gurken koennen so lang werden wie dein Arm!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Tab -->
+  <div class="tab-inhalt" data-tab-inhalt="quiz" data-owner="gurke">
+    <div class="quiz-bereich" data-quiz="gurke">
+      <div class="quiz-frage aktiv" data-quiz-frage="0">
+        <div class="quiz-frage-nr">Frage 1 von 2</div>
+        <div class="quiz-frage-text">Woraus besteht die Gurke fast ganz?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">Sand</button>
+          <button class="quiz-antwort" data-korrekt="0">Luft</button>
+          <button class="quiz-antwort" data-korrekt="1">Wasser</button>
+          <button class="quiz-antwort" data-korrekt="0">Schokolade</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-frage" data-quiz-frage="1">
+        <div class="quiz-frage-nr">Frage 2 von 2</div>
+        <div class="quiz-frage-text">Wie viel Prozent Wasser hat die Gurke?</div>
+        <div class="quiz-antworten">
+          <button class="quiz-antwort" data-korrekt="0">10</button>
+          <button class="quiz-antwort" data-korrekt="0">50</button>
+          <button class="quiz-antwort" data-korrekt="1">95!</button>
+          <button class="quiz-antwort" data-korrekt="0">2</button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="btn-3d quiz-weiter" data-quiz-weiter>Weiter</button>
+      </div>
+      <div class="quiz-ergebnis" data-quiz-ergebnis>
+        <h2>Super gemacht!</h2>
+        <div class="quiz-punkte"></div>
+        <button class="btn-3d" data-quiz-neustart>Nochmal spielen</button>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ======================================================
-     QUIZ
-     ====================================================== -->
-<section id="quiz">
-    <div class="container">
-        <div class="section-heading reveal">
-            <span class="emoji-anchor" aria-hidden="true">🧠</span>
-            <h2>Quiz-Zeit!</h2>
-            <p>Was hast du gelernt? Probier es aus!</p>
-        </div>
-
-        <div class="quiz-progress reveal" id="quiz-progress">Frage 1 von 10</div>
-
-        <div id="quiz-container">
-            <!-- Questions injected by JS -->
-        </div>
-
-        <div class="quiz-score" id="quiz-score">
-            <span class="score-emoji" id="score-emoji">🎉</span>
-            <div class="score-text" id="score-text"></div>
-            <div class="score-sub" id="score-sub"></div>
-            <br>
-            <button class="btn btn-lila" onclick="resetQuiz()">🔄 Nochmal spielen!</button>
-        </div>
-    </div>
-</section>
-
-<!-- ======================================================
-     CHECKLISTE
-     ====================================================== -->
-<section id="checkliste">
-    <div class="container">
-        <div class="section-heading reveal">
-            <span class="emoji-anchor" aria-hidden="true">✅</span>
-            <h2>Meine Checkliste</h2>
-            <p>Was hast du schon gemacht?</p>
-        </div>
-
-        <div id="checklist-container">
-            <!-- Injected by JS -->
-        </div>
-
-        <div style="text-align:center; margin-top:24px;">
-            <button class="btn btn-orange" onclick="resetChecklist()">🗑️ Alles zuruecksetzen</button>
-        </div>
-    </div>
-</section>
-
-<!-- ======================================================
-     STICKY BOTTOM NAV
-     ====================================================== -->
-<nav class="bottom-nav" aria-label="Hauptnavigation">
-    <div class="bottom-nav-inner">
-        <button class="nav-btn" onclick="smoothScrollTo('#start')" aria-label="Start" data-section="start">
-            🏠
-            <span class="nav-dot"></span>
-        </button>
-        <button class="nav-btn" onclick="smoothScrollTo('#tomate')" aria-label="Tomate" data-section="tomate">
-            🍅
-            <span class="nav-dot"></span>
-        </button>
-        <button class="nav-btn" onclick="smoothScrollTo('#karotte')" aria-label="Karotte" data-section="karotte">
-            🥕
-            <span class="nav-dot"></span>
-        </button>
-        <button class="nav-btn" onclick="smoothScrollTo('#erbsen')" aria-label="Erbsen" data-section="erbsen">
-            🫛
-            <span class="nav-dot"></span>
-        </button>
-        <button class="nav-btn" onclick="smoothScrollTo('#gurke')" aria-label="Gurke" data-section="gurke">
-            🥒
-            <span class="nav-dot"></span>
-        </button>
-        <button class="nav-btn" onclick="smoothScrollTo('#quiz')" aria-label="Quiz" data-section="quiz">
-            🧠
-            <span class="nav-dot"></span>
-        </button>
-        <button class="nav-btn" onclick="smoothScrollTo('#checkliste')" aria-label="Checkliste" data-section="checkliste">
-            ✅
-            <span class="nav-dot"></span>
-        </button>
-    </div>
-</nav>
-
-<!-- ======================================================
-     JAVASCRIPT
-     ====================================================== -->
 <script>
 (function() {
-    'use strict';
+  'use strict';
 
-    /* ==========================
-       SCROLL TO SECTION
-       ========================== */
-    window.smoothScrollTo = function(selector) {
-        const el = document.querySelector(selector);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
+  // ===== ROUTER =====
+  function navigiere(viewId, tab) {
+    var hash = '#' + viewId;
+    if (tab) hash += '/' + tab;
+    window.location.hash = hash;
+  }
 
-    /* ==========================
-       SCROLL REVEAL
-       ========================== */
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('visible');
-                revealObserver.unobserve(e.target);
-            }
-        });
-    }, { threshold: 0.15 });
+  function routeVerarbeiten() {
+    var hash = window.location.hash.replace('#', '') || 'garten';
+    var teile = hash.split('/');
+    var viewId = teile[0];
+    var tab = teile[1] || null;
 
-    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    // Hide all views
+    var ansichten = document.querySelectorAll('.ansicht');
+    ansichten.forEach(function(a) {
+      a.classList.remove('aktiv');
+    });
 
-    /* ==========================
-       ACTIVE NAV INDICATOR
-       ========================== */
-    const sections = document.querySelectorAll('section[id]');
-    const navBtns = document.querySelectorAll('.nav-btn');
+    // Show target view
+    var ziel = document.getElementById(viewId);
+    if (!ziel) {
+      ziel = document.getElementById('garten');
+      viewId = 'garten';
+    }
 
-    const navObserver = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                navBtns.forEach(b => b.classList.remove('active'));
-                const sectionId = e.target.id;
-                const btn = Array.from(navBtns).find(b => b.dataset.section === sectionId);
-                if (btn) btn.classList.add('active');
-            }
-        });
-    }, { threshold: 0.3 });
+    // Small delay for transition
+    requestAnimationFrame(function() {
+      ziel.classList.add('aktiv');
+    });
 
-    sections.forEach(s => navObserver.observe(s));
+    // Activate tab if specified
+    if (tab) {
+      var tabContainer = ziel.querySelector('[data-tabs]');
+      if (tabContainer) {
+        tabWechseln(ziel, tab);
+      }
+    }
 
-    /* ==========================
-       QUIZ
-       ========================== */
-    const quizData = [
-        {
-            veg: 'tomate',
-            emoji: '🍅',
-            q: 'Welche Farbe hat eine reife Tomate?',
-            opts: ['Blau', 'Rot', 'Lila', 'Schwarz'],
-            correct: 1
-        },
-        {
-            veg: 'tomate',
-            emoji: '🍅',
-            q: 'Woher kommt die Tomate?',
-            opts: ['Mond', 'Suedamerika', 'Nordpol', 'Afrika'],
-            correct: 1
-        },
-        {
-            veg: 'karotte',
-            emoji: '🥕',
-            q: 'Wo waechst die Karotte?',
-            opts: ['Am Baum', 'Auf dem Dach', 'Unter der Erde', 'Im Wasser'],
-            correct: 2
-        },
-        {
-            veg: 'karotte',
-            emoji: '🥕',
-            q: 'Welches Vitamin hat die Karotte?',
-            opts: ['Vitamin Z', 'Vitamin A', 'Vitamin 7', 'Vitamin Quatsch'],
-            correct: 1
-        },
-        {
-            veg: 'karotte',
-            emoji: '🥕',
-            q: 'Welche Farbe hatten Karotten frueher?',
-            opts: ['Lila', 'Blau', 'Rosa', 'Weiss'],
-            correct: 0
-        },
-        {
-            veg: 'erbsen',
-            emoji: '🫛',
-            q: 'Was koennen Erbsenpflanzen?',
-            opts: ['Fliegen', 'Singen', 'Klettern', 'Springen'],
-            correct: 2
-        },
-        {
-            veg: 'erbsen',
-            emoji: '🫛',
-            q: 'Wie viele Erbsen sind in einer Schote?',
-            opts: ['100', '5 bis 8', '1', '50'],
-            correct: 1
-        },
-        {
-            veg: 'gurke',
-            emoji: '🥒',
-            q: 'Woraus besteht die Gurke fast ganz?',
-            opts: ['Sand', 'Luft', 'Wasser', 'Schokolade'],
-            correct: 2
-        },
-        {
-            veg: 'gurke',
-            emoji: '🥒',
-            q: 'Wie viel Prozent Wasser hat die Gurke?',
-            opts: ['10 Prozent', '50 Prozent', '95 Prozent', '2 Prozent'],
-            correct: 2
-        },
-        {
-            veg: 'mix',
-            emoji: '🌱',
-            q: 'Was brauchen alle Pflanzen zum Wachsen?',
-            opts: ['Schokolade', 'Wasser und Sonne', 'Eis', 'Einen Fernseher'],
-            correct: 1
-        }
-    ];
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
 
-    let currentQ = 0;
-    let score = 0;
-    let answered = new Array(quizData.length).fill(false);
+  // ===== TAB SWITCHING =====
+  function tabWechseln(container, tabName) {
+    // Get owner name from data-tabs attribute
+    var tabLeiste = container.querySelector('[data-tabs]');
+    var owner = tabLeiste ? tabLeiste.getAttribute('data-tabs') : '';
 
-    function renderQuiz() {
-        const container = document.getElementById('quiz-container');
-        container.innerHTML = '';
+    // Deactivate all tab buttons
+    var allBtns = container.querySelectorAll('.tab-btn');
+    allBtns.forEach(function(b) { b.classList.remove('aktiv'); });
 
-        quizData.forEach((q, i) => {
-            const card = document.createElement('div');
-            card.className = 'quiz-card reveal visible';
-            card.setAttribute('data-veg', q.veg);
-            card.id = 'q-' + i;
-            card.style.display = i === currentQ ? 'block' : 'none';
+    // Activate target tab button
+    var zielBtn = container.querySelector('.tab-btn[data-tab="' + tabName + '"]');
+    if (zielBtn) zielBtn.classList.add('aktiv');
 
-            const emojiSpan = document.createElement('span');
-            emojiSpan.className = 'q-emoji';
-            emojiSpan.textContent = q.emoji;
-            card.appendChild(emojiSpan);
+    // Hide all tab contents for this owner
+    var allInhalte = container.querySelectorAll('.tab-inhalt[data-owner="' + owner + '"]');
+    allInhalte.forEach(function(i) { i.classList.remove('aktiv'); });
 
-            const qText = document.createElement('div');
-            qText.className = 'q-text';
-            qText.textContent = q.q;
-            card.appendChild(qText);
+    // Show target tab content
+    var zielInhalt = container.querySelector('.tab-inhalt[data-tab-inhalt="' + tabName + '"][data-owner="' + owner + '"]');
+    if (zielInhalt) zielInhalt.classList.add('aktiv');
+  }
 
-            const optionsDiv = document.createElement('div');
-            optionsDiv.className = 'quiz-options';
-            q.opts.forEach((opt, j) => {
-                const btn = document.createElement('button');
-                btn.className = 'quiz-opt';
-                btn.dataset.qi = i;
-                btn.dataset.oi = j;
-                btn.textContent = opt;
-                optionsDiv.appendChild(btn);
+  // ===== SLIDESHOW =====
+  function diashowInit(el) {
+    var dias = el.querySelectorAll('.dia');
+    var punkte = el.querySelectorAll('.dia-punkt');
+    var zurueckBtn = el.querySelector('[data-dia-zurueck]');
+    var vorBtn = el.querySelector('[data-dia-vor]');
+    var aktuellerIndex = 0;
+
+    function diaZeigen(index) {
+      if (index < 0 || index >= dias.length) return;
+      aktuellerIndex = index;
+      dias.forEach(function(d) { d.classList.remove('aktiv'); });
+      punkte.forEach(function(p) { p.classList.remove('aktiv'); });
+      dias[index].classList.add('aktiv');
+      if (punkte[index]) punkte[index].classList.add('aktiv');
+      zurueckBtn.disabled = (index === 0);
+      vorBtn.disabled = (index === dias.length - 1);
+    }
+
+    zurueckBtn.addEventListener('click', function() {
+      diaZeigen(aktuellerIndex - 1);
+    });
+    vorBtn.addEventListener('click', function() {
+      diaZeigen(aktuellerIndex + 1);
+    });
+
+    // Allow dot clicking
+    punkte.forEach(function(p, i) {
+      p.style.cursor = 'pointer';
+      p.addEventListener('click', function() {
+        diaZeigen(i);
+      });
+    });
+
+    diaZeigen(0);
+  }
+
+  // ===== FLIP CARDS =====
+  function flipKartenInit() {
+    var karten = document.querySelectorAll('[data-flip]');
+    karten.forEach(function(k) {
+      k.addEventListener('click', function() {
+        k.classList.toggle('umgedreht');
+      });
+    });
+  }
+
+  // ===== QUIZ =====
+  function quizInit(quizEl) {
+    var name = quizEl.getAttribute('data-quiz');
+    var fragen = quizEl.querySelectorAll('[data-quiz-frage]');
+    var ergebnis = quizEl.querySelector('[data-quiz-ergebnis]');
+    var punkteAnzeige = quizEl.querySelector('.quiz-punkte');
+    var neustartBtn = quizEl.querySelector('[data-quiz-neustart]');
+    var punkte = 0;
+    var aktFrage = 0;
+    var gesamtFragen = fragen.length;
+
+    fragen.forEach(function(frage, fIndex) {
+      var antworten = frage.querySelectorAll('.quiz-antwort');
+      var feedback = frage.querySelector('.quiz-feedback');
+      var weiterBtn = frage.querySelector('[data-quiz-weiter]');
+      var beantwortet = false;
+
+      antworten.forEach(function(a) {
+        a.addEventListener('click', function() {
+          if (beantwortet) return;
+          beantwortet = true;
+
+          // Disable all buttons
+          antworten.forEach(function(btn) { btn.disabled = true; });
+
+          var korrekt = a.getAttribute('data-korrekt') === '1';
+          if (korrekt) {
+            a.classList.add('richtig');
+            punkte++;
+            feedback.textContent = 'Richtig! Super!';
+            feedback.style.color = '#10B981';
+            konfettiStarten();
+          } else {
+            a.classList.add('falsch');
+            feedback.textContent = 'Nicht ganz! Versuch es beim naechsten Mal!';
+            feedback.style.color = '#EF4444';
+            // Show correct answer
+            antworten.forEach(function(btn) {
+              if (btn.getAttribute('data-korrekt') === '1') {
+                btn.classList.add('richtig');
+              }
             });
-            card.appendChild(optionsDiv);
+          }
 
-            const fbDiv = document.createElement('div');
-            fbDiv.className = 'quiz-feedback';
-            fbDiv.id = 'fb-' + i;
-            card.appendChild(fbDiv);
-
-            container.appendChild(card);
+          weiterBtn.style.display = 'inline-flex';
         });
+      });
 
-        updateProgress();
-
-        // Attach events
-        document.querySelectorAll('.quiz-opt').forEach(btn => {
-            btn.addEventListener('click', handleAnswer);
-        });
-    }
-
-    function updateProgress() {
-        const prog = document.getElementById('quiz-progress');
-        prog.textContent = `Frage ${currentQ + 1} von ${quizData.length}`;
-    }
-
-    function handleAnswer(e) {
-        const qi = parseInt(e.target.dataset.qi);
-        const oi = parseInt(e.target.dataset.oi);
-
-        if (answered[qi]) return;
-        answered[qi] = true;
-
-        const q = quizData[qi];
-        const fb = document.getElementById('fb-' + qi);
-        const opts = document.querySelectorAll(`.quiz-opt[data-qi="${qi}"]`);
-
-        // Mark correct
-        opts[q.correct].classList.add('correct');
-
-        if (oi === q.correct) {
-            score++;
-            fb.className = 'quiz-feedback show yay';
-            fb.textContent = '🎉 Super! Das ist richtig!';
-            launchConfetti();
+      weiterBtn.addEventListener('click', function() {
+        frage.classList.remove('aktiv');
+        if (fIndex + 1 < gesamtFragen) {
+          fragen[fIndex + 1].classList.add('aktiv');
         } else {
-            e.target.classList.add('wrong');
-            fb.className = 'quiz-feedback show try';
-            fb.textContent = '😊 Fast! Schau nochmal die richtige Antwort an!';
+          // Show result
+          ergebnis.classList.add('aktiv');
+          punkteAnzeige.textContent = punkte + ' von ' + gesamtFragen + ' richtig!';
+          if (punkte === gesamtFragen) {
+            konfettiStarten();
+          }
         }
+      });
+    });
 
-        // Disable all options
-        opts.forEach(o => {
-            o.style.pointerEvents = 'none';
+    neustartBtn.addEventListener('click', function() {
+      punkte = 0;
+      aktFrage = 0;
+      ergebnis.classList.remove('aktiv');
+      fragen.forEach(function(f, i) {
+        f.classList.remove('aktiv');
+        var antworten = f.querySelectorAll('.quiz-antwort');
+        antworten.forEach(function(a) {
+          a.disabled = false;
+          a.classList.remove('richtig', 'falsch');
         });
+        f.querySelector('.quiz-feedback').textContent = '';
+        f.querySelector('[data-quiz-weiter]').style.display = 'none';
+      });
+      fragen[0].classList.add('aktiv');
+    });
+  }
 
-        // Auto advance after delay
-        setTimeout(() => {
-            if (currentQ < quizData.length - 1) {
-                document.getElementById('q-' + currentQ).style.display = 'none';
-                currentQ++;
-                document.getElementById('q-' + currentQ).style.display = 'block';
-                updateProgress();
-            } else {
-                showScore();
-            }
-        }, 1800);
-    }
+  // ===== WATER GAME =====
+  function wasserSpielInit() {
+    var spiel = document.querySelector('[data-wasser-spiel]');
+    if (!spiel) return;
 
-    function showScore() {
-        document.getElementById('quiz-progress').style.display = 'none';
-        document.getElementById('quiz-container').style.display = 'none';
-        const sc = document.getElementById('quiz-score');
-        sc.classList.add('show');
+    var zahlEl = spiel.querySelector('[data-wasser-zahl]');
+    var fuellstandEl = spiel.querySelector('[data-wasser-fuellstand]');
+    var tropfenBereich = spiel.querySelector('[data-wasser-tropfen-bereich]');
+    var aktuellerWert = 0;
+    var zielWert = 95;
+    var tropfenAnzahl = 19; // 19 drops x 5% each = 95%
+    var proTropfen = 5;
+    var fertig = false;
 
-        const emoji = document.getElementById('score-emoji');
-        const text = document.getElementById('score-text');
-        const sub = document.getElementById('score-sub');
+    // Create water drops
+    for (var i = 0; i < tropfenAnzahl; i++) {
+      var tropfen = document.createElement('button');
+      tropfen.className = 'wasser-tropfen';
+      tropfen.setAttribute('aria-label', 'Wassertropfen');
+      tropfen.addEventListener('click', function() {
+        if (fertig) return;
+        this.classList.add('verbraucht');
+        aktuellerWert += proTropfen;
+        if (aktuellerWert > zielWert) aktuellerWert = zielWert;
+        zahlEl.textContent = aktuellerWert;
+        fuellstandEl.style.height = aktuellerWert + '%';
 
-        if (score >= 9) {
-            emoji.textContent = '🏆';
-            text.textContent = score + ' von 10 richtig!';
-            sub.textContent = 'Wow, du bist ein Gemuese-Profi!';
-            launchConfetti();
-            setTimeout(launchConfetti, 600);
-        } else if (score >= 6) {
-            emoji.textContent = '🌟';
-            text.textContent = score + ' von 10 richtig!';
-            sub.textContent = 'Toll gemacht! Du weisst schon viel!';
-            launchConfetti();
-        } else {
-            emoji.textContent = '🌱';
-            text.textContent = score + ' von 10 richtig!';
-            sub.textContent = 'Gut versucht! Lies nochmal und probiere es wieder!';
+        if (aktuellerWert >= zielWert) {
+          fertig = true;
+          konfettiStarten();
+          zahlEl.parentElement.style.color = '#10B981';
+
+          // Add celebration text
+          var feier = document.createElement('div');
+          feier.style.cssText = 'font-family:Fredoka One,cursive;font-size:1.4rem;color:#10B981;margin-top:1rem;';
+          feier.textContent = 'Gustav ist voll! Super gemacht!';
+          spiel.appendChild(feier);
         }
+      });
+      tropfenBereich.appendChild(tropfen);
+    }
+  }
+
+  // ===== CONFETTI =====
+  var konfettiCanvas = document.getElementById('konfetti-canvas');
+  var konfettiCtx = konfettiCanvas.getContext('2d');
+  var konfettiTeile = [];
+  var konfettiAktiv = false;
+
+  function konfettiResize() {
+    konfettiCanvas.width = window.innerWidth;
+    konfettiCanvas.height = window.innerHeight;
+  }
+
+  function konfettiStarten() {
+    konfettiResize();
+    konfettiTeile = [];
+    var farben = ['#F7E03B', '#FF7040', '#2EBFE9', '#62D962', '#FF8CBC', '#A220DF', '#EF4444'];
+
+    for (var i = 0; i < 80; i++) {
+      konfettiTeile.push({
+        x: Math.random() * konfettiCanvas.width,
+        y: Math.random() * -konfettiCanvas.height * 0.5,
+        w: Math.random() * 10 + 5,
+        h: Math.random() * 6 + 3,
+        farbe: farben[Math.floor(Math.random() * farben.length)],
+        vx: (Math.random() - 0.5) * 4,
+        vy: Math.random() * 3 + 2,
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 10,
+        leben: 1
+      });
     }
 
-    window.resetQuiz = function() {
-        currentQ = 0;
-        score = 0;
-        answered = new Array(quizData.length).fill(false);
-        document.getElementById('quiz-progress').style.display = '';
-        document.getElementById('quiz-container').style.display = '';
-        document.getElementById('quiz-score').classList.remove('show');
-        renderQuiz();
-    };
-
-    renderQuiz();
-
-    /* ==========================
-       CONFETTI
-       ========================== */
-    const canvas = document.getElementById('confetti-canvas');
-    const ctx = canvas.getContext('2d');
-    let confettiPieces = [];
-    let confettiActive = false;
-
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    if (!konfettiAktiv) {
+      konfettiAktiv = true;
+      konfettiAnimieren();
     }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+  }
 
-    function launchConfetti() {
-        const colors = ['#F7E03B', '#FF7040', '#2EBFE9', '#62D962', '#FF8CBC', '#A220DF', '#EF4444'];
-        for (let i = 0; i < 60; i++) {
-            confettiPieces.push({
-                x: Math.random() * canvas.width,
-                y: -20 - Math.random() * 200,
-                w: 8 + Math.random() * 8,
-                h: 6 + Math.random() * 6,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                vx: (Math.random() - 0.5) * 4,
-                vy: 2 + Math.random() * 4,
-                rot: Math.random() * 360,
-                vr: (Math.random() - 0.5) * 10,
-                life: 1
-            });
-        }
-        if (!confettiActive) {
-            confettiActive = true;
-            animateConfetti();
-        }
+  function konfettiAnimieren() {
+    konfettiCtx.clearRect(0, 0, konfettiCanvas.width, konfettiCanvas.height);
+    var noch = false;
+
+    konfettiTeile.forEach(function(t) {
+      if (t.leben <= 0) return;
+      noch = true;
+
+      t.x += t.vx;
+      t.y += t.vy;
+      t.vy += 0.05;
+      t.rotation += t.vr;
+      t.leben -= 0.005;
+
+      konfettiCtx.save();
+      konfettiCtx.translate(t.x, t.y);
+      konfettiCtx.rotate(t.rotation * Math.PI / 180);
+      konfettiCtx.globalAlpha = Math.max(0, t.leben);
+      konfettiCtx.fillStyle = t.farbe;
+      konfettiCtx.fillRect(-t.w / 2, -t.h / 2, t.w, t.h);
+      konfettiCtx.restore();
+    });
+
+    if (noch) {
+      requestAnimationFrame(konfettiAnimieren);
+    } else {
+      konfettiAktiv = false;
+      konfettiCtx.clearRect(0, 0, konfettiCanvas.width, konfettiCanvas.height);
     }
-    window.launchConfetti = launchConfetti;
+  }
 
-    function animateConfetti() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        confettiPieces.forEach((p, i) => {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.rot += p.vr;
-            p.vy += 0.1;
-            p.life -= 0.005;
+  // ===== INITIALIZE =====
+  function init() {
+    // Router
+    window.addEventListener('hashchange', routeVerarbeiten);
+    routeVerarbeiten();
 
-            if (p.life > 0) {
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate(p.rot * Math.PI / 180);
-                ctx.globalAlpha = p.life;
-                ctx.fillStyle = p.color;
-                ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-                ctx.restore();
-            }
-        });
+    // Tab buttons
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tabName = btn.getAttribute('data-tab');
+        var container = btn.closest('.ansicht');
+        tabWechseln(container, tabName);
+      });
+    });
 
-        confettiPieces = confettiPieces.filter(p => p.life > 0 && p.y < canvas.height + 50);
+    // Back buttons
+    document.querySelectorAll('[data-zurueck]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        navigiere('garten');
+      });
+    });
 
-        if (confettiPieces.length > 0) {
-            requestAnimationFrame(animateConfetti);
-        } else {
-            confettiActive = false;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-    }
+    // Garden card links
+    document.querySelectorAll('[data-link]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var href = link.getAttribute('href');
+        window.location.hash = href;
+      });
+    });
 
-    /* ==========================
-       CHECKLISTE
-       ========================== */
-    const checklistData = [
-        {
-            veg: 'tomate',
-            title: '🍅 Tomate',
-            items: [
-                'Tomaten-Abschnitt gelesen',
-                'Video angeschaut',
-                'Fun Facts gelernt',
-                'Quiz-Fragen zur Tomate beantwortet'
-            ]
-        },
-        {
-            veg: 'karotte',
-            title: '🥕 Karotte',
-            items: [
-                'Karotten-Abschnitt gelesen',
-                'Video angeschaut',
-                'Karotten-Experiment gemacht',
-                'Fun Facts gelernt',
-                'Quiz-Fragen zur Karotte beantwortet'
-            ]
-        },
-        {
-            veg: 'erbsen',
-            title: '🫛 Erbsen',
-            items: [
-                'Erbsen-Abschnitt gelesen',
-                'Watteball-Experiment gemacht',
-                'Fun Facts gelernt',
-                'Quiz-Fragen zu Erbsen beantwortet'
-            ]
-        },
-        {
-            veg: 'gurke',
-            title: '🥒 Gurke',
-            items: [
-                'Gurken-Abschnitt gelesen',
-                'Fun Facts gelernt',
-                'Quiz-Fragen zur Gurke beantwortet'
-            ]
-        }
-    ];
+    // Slideshows
+    document.querySelectorAll('[data-diashow]').forEach(function(el) {
+      diashowInit(el);
+    });
 
-    function loadChecklist() {
-        try {
-            const data = JSON.parse(localStorage.getItem('gemuese-check') || '{}');
-            if (typeof data !== 'object' || data === null || Array.isArray(data)) return {};
-            return data;
-        } catch(e) { return {}; }
-    }
+    // Flip cards
+    flipKartenInit();
 
-    function saveChecklist(data) {
-        localStorage.setItem('gemuese-check', JSON.stringify(data));
-    }
+    // Quizzes
+    document.querySelectorAll('[data-quiz]').forEach(function(el) {
+      quizInit(el);
+    });
 
-    function renderChecklist() {
-        const container = document.getElementById('checklist-container');
-        container.innerHTML = '';
-        const saved = loadChecklist();
+    // Water game
+    wasserSpielInit();
 
-        checklistData.forEach(group => {
-            const grp = document.createElement('div');
-            grp.className = 'check-group reveal visible';
-            grp.setAttribute('data-veg', group.veg);
+    // Confetti resize
+    window.addEventListener('resize', konfettiResize);
+    konfettiResize();
+  }
 
-            const title = document.createElement('div');
-            title.className = 'check-group-title';
-            title.textContent = group.title;
-            grp.appendChild(title);
-
-            group.items.forEach((item, idx) => {
-                const key = group.veg + '-' + idx;
-                const isDone = saved[key] || false;
-
-                const row = document.createElement('div');
-                row.className = 'check-item' + (isDone ? ' done' : '');
-                const checkBox = document.createElement('div');
-                checkBox.className = 'check-box';
-                row.appendChild(checkBox);
-                const itemSpan = document.createElement('span');
-                itemSpan.textContent = item;
-                row.appendChild(itemSpan);
-                row.addEventListener('click', () => {
-                    const data = loadChecklist();
-                    data[key] = !data[key];
-                    saveChecklist(data);
-                    row.classList.toggle('done');
-                    if (data[key]) {
-                        row.style.transform = 'scale(1.05)';
-                        setTimeout(() => row.style.transform = '', 200);
-                    }
-                });
-                grp.appendChild(row);
-            });
-
-            container.appendChild(grp);
-        });
-    }
-
-    window.resetChecklist = function() {
-        localStorage.removeItem('gemuese-check');
-        renderChecklist();
-    };
-
-    renderChecklist();
-
+  // Start when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
 </script>
-
 </body>
 </html>
