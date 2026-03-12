@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomaten-Abenteuer! - Pflanze deine eigene Tomate</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --rot: #e74c3c;
+            --gruen: #27ae60;
+            --gelb: #f1c40f;
+            --orange: #e67e22;
+            --braun: #8B6914;
+            --himmel: #87CEEB;
+            --erde: #8B4513;
+            --hell-gruen: #a8e6a3;
+            --rosa: #ff9ff3;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, var(--himmel) 0%, #b8e6ff 40%, var(--hell-gruen) 60%, #6BCB77 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== WOLKEN ANIMATION ===== */
+        .wolken {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .wolke {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: schweben linear infinite;
+        }
+        .wolke::before, .wolke::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        .wolke:nth-child(1) { width: 120px; height: 50px; top: 30px; animation-duration: 25s; }
+        .wolke:nth-child(1)::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+        .wolke:nth-child(1)::after { width: 80px; height: 50px; top: -20px; left: 50px; }
+        .wolke:nth-child(2) { width: 100px; height: 40px; top: 80px; animation-duration: 35s; animation-delay: -10s; }
+        .wolke:nth-child(2)::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+        .wolke:nth-child(2)::after { width: 70px; height: 40px; top: -15px; left: 40px; }
+        .wolke:nth-child(3) { width: 90px; height: 35px; top: 50px; animation-duration: 30s; animation-delay: -20s; }
+        .wolke:nth-child(3)::before { width: 45px; height: 45px; top: -20px; left: 10px; }
+        .wolke:nth-child(3)::after { width: 60px; height: 35px; top: -12px; left: 35px; }
+
+        @keyframes schweben {
+            from { left: -200px; }
+            to { left: 110%; }
+        }
+
+        /* ===== SONNE ===== */
+        .sonne {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            width: 100px;
+            height: 100px;
+            background: var(--gelb);
+            border-radius: 50%;
+            box-shadow: 0 0 40px var(--gelb), 0 0 80px rgba(241,196,15,0.4);
+            z-index: 1;
+            animation: strahlen 3s ease-in-out infinite;
+            cursor: pointer;
+        }
+        .sonne:hover { transform: scale(1.2) rotate(20deg); }
+        .sonne .auge {
+            position: absolute;
+            width: 12px; height: 14px;
+            background: #333;
+            border-radius: 50%;
+            top: 38px;
+        }
+        .sonne .auge.links { left: 28px; }
+        .sonne .auge.rechts { right: 28px; }
+        .sonne .mund {
+            position: absolute;
+            width: 30px; height: 15px;
+            border-bottom: 3px solid #333;
+            border-radius: 0 0 50% 50%;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes strahlen {
+            0%, 100% { box-shadow: 0 0 40px var(--gelb), 0 0 80px rgba(241,196,15,0.4); }
+            50% { box-shadow: 0 0 60px var(--gelb), 0 0 120px rgba(241,196,15,0.5); }
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            position: relative;
+            z-index: 2;
+        }
+        header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3.5em;
+            color: var(--rot);
+            text-shadow: 3px 3px 0 var(--orange), 5px 5px 0 rgba(0,0,0,0.1);
+            animation: huepfen 2s ease-in-out infinite;
+        }
+        header .untertitel {
+            font-size: 1.4em;
+            color: #2d5016;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        @keyframes huepfen {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* ===== TOMATE MASKOTTCHEN ===== */
+        .maskottchen {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            position: relative;
+            animation: wackeln 1.5s ease-in-out infinite;
+            cursor: pointer;
+        }
+        .maskottchen:hover { animation: drehen 0.5s ease; }
+        .tomaten-koerper {
+            width: 100px;
+            height: 90px;
+            background: radial-gradient(circle at 35% 35%, #ff6b6b, var(--rot), #c0392b);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+        }
+        .tomaten-koerper::before {
+            content: '';
+            position: absolute;
+            width: 20px; height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            top: 15px; left: 18px;
+        }
+        .tomaten-blatt {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px; height: 25px;
+        }
+        .tomaten-blatt div {
+            position: absolute;
+            width: 18px; height: 10px;
+            background: var(--gruen);
+            border-radius: 50% 50% 0 0;
+        }
+        .tomaten-blatt div:nth-child(1) { left: 0; transform: rotate(-30deg); }
+        .tomaten-blatt div:nth-child(2) { left: 11px; top: -5px; }
+        .tomaten-blatt div:nth-child(3) { left: 22px; transform: rotate(30deg); }
+        .tomaten-auge {
+            position: absolute;
+            width: 14px; height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 30px;
+        }
+        .tomaten-auge::after {
+            content: '';
+            position: absolute;
+            width: 8px; height: 8px;
+            background: #333;
+            border-radius: 50%;
+            top: 4px; left: 3px;
+        }
+        .tomaten-auge.l { left: 30px; }
+        .tomaten-auge.r { left: 62px; }
+        .tomaten-mund {
+            position: absolute;
+            width: 25px; height: 12px;
+            border-bottom: 3px solid #333;
+            border-radius: 0 0 50% 50%;
+            bottom: 22px;
+            left: 47px;
+        }
+
+        @keyframes wackeln {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        @keyframes drehen {
+            0% { transform: rotate(0); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        nav a {
+            background: white;
+            color: var(--gruen);
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 3px solid var(--gruen);
+        }
+        nav a:hover {
+            background: var(--gruen);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(39,174,96,0.3);
+        }
+        nav a .emoji { font-size: 1.3em; margin-right: 5px; }
+
+        /* ===== CONTENT CONTAINER ===== */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== SECTION STYLING ===== */
+        section {
+            margin: 40px 0;
+            scroll-margin-top: 20px;
+        }
+        .section-titel {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.2em;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 20px;
+        }
+
+        /* ===== UEBERBLICK KARTE ===== */
+        .ueberblick-karte {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border: 4px dashed var(--gruen);
+            position: relative;
+            overflow: hidden;
+        }
+        .ueberblick-karte::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            background: var(--gelb);
+            border-radius: 50%;
+            opacity: 0.2;
+        }
+        .ueberblick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .ueberblick-item {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e8f5e9);
+            border-radius: 20px;
+            transition: transform 0.3s;
+            cursor: default;
+        }
+        .ueberblick-item:hover { transform: scale(1.05); }
+        .ueberblick-icon { font-size: 3em; margin-bottom: 10px; }
+        .ueberblick-item h3 {
+            color: var(--gruen);
+            font-family: 'Fredoka One', cursive;
+            margin-bottom: 8px;
+        }
+        .ueberblick-item p {
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        /* ===== WACHSTUMS-SCHRITTE ===== */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to bottom, var(--braun), var(--gruen), var(--rot));
+            border-radius: 3px;
+            transform: translateX(-50%);
+        }
+        .schritt {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+        }
+        .schritt:nth-child(even) { flex-direction: row-reverse; }
+        .schritt-inhalt {
+            width: 42%;
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        .schritt-inhalt:hover { transform: scale(1.03); }
+        .schritt-nummer {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5em;
+            color: white;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .schritt:nth-child(1) .schritt-nummer { background: var(--braun); }
+        .schritt:nth-child(2) .schritt-nummer { background: #7fad71; }
+        .schritt:nth-child(3) .schritt-nummer { background: var(--gruen); }
+        .schritt:nth-child(4) .schritt-nummer { background: var(--gelb); }
+        .schritt:nth-child(5) .schritt-nummer { background: var(--orange); }
+        .schritt:nth-child(6) .schritt-nummer { background: var(--rot); }
+
+        .schritt-emoji { font-size: 2.5em; text-align: center; margin-bottom: 10px; }
+        .schritt-inhalt h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--gruen);
+            margin-bottom: 8px;
+            font-size: 1.3em;
+        }
+        .schritt-inhalt p {
+            color: #555;
+            line-height: 1.6;
+        }
+        .schritt-tipp {
+            background: #fff9c4;
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            border-left: 4px solid var(--gelb);
+        }
+
+        /* ===== WACHSTUMS-FORTSCHRITTSANZEIGE ===== */
+        .fortschritt-container {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        .fortschritt-titel {
+            font-family: 'Fredoka One', cursive;
+            color: var(--gruen);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        .fortschritt-bahn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            padding: 20px 0;
+        }
+        .fortschritt-bahn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 8px;
+            background: linear-gradient(to right, var(--braun), var(--gruen), var(--gelb), var(--orange), var(--rot));
+            border-radius: 4px;
+            transform: translateY(-50%);
+        }
+        .fortschritt-punkt {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .fortschritt-punkt:hover { transform: scale(1.3); }
+        .fortschritt-punkt .punkt-emoji { font-size: 2.5em; display: block; }
+        .fortschritt-punkt .punkt-text {
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #555;
+            margin-top: 5px;
+            white-space: nowrap;
+        }
+        .fortschritt-punkt .punkt-zeit {
+            font-size: 0.7em;
+            color: #999;
+        }
+
+        /* ===== VIDEO BEREICH ===== */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .video-karte {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .video-karte:hover { transform: translateY(-5px); }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            background: #1a1a2e;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-info {
+            padding: 20px;
+        }
+        .video-info h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--gruen);
+            margin-bottom: 8px;
+        }
+        .video-info p {
+            color: #666;
+            font-size: 0.95em;
+        }
+        .video-badge {
+            display: inline-block;
+            background: var(--hell-gruen);
+            color: var(--gruen);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        /* ===== QUIZ BEREICH ===== */
+        .quiz-container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border: 4px solid var(--rosa);
+        }
+        .quiz-frage {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .quiz-optionen {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .quiz-btn {
+            padding: 15px 20px;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            background: white;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .quiz-btn:hover {
+            border-color: var(--gruen);
+            background: #e8f5e9;
+            transform: scale(1.05);
+        }
+        .quiz-btn.richtig {
+            border-color: var(--gruen);
+            background: #c8e6c9;
+            animation: feier 0.5s ease;
+        }
+        .quiz-btn.falsch {
+            border-color: var(--rot);
+            background: #ffcdd2;
+            animation: schuetteln 0.5s ease;
+        }
+        .quiz-ergebnis {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: 700;
+            min-height: 40px;
+        }
+        .quiz-nav {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .quiz-nav button {
+            background: var(--gruen);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.3s;
+        }
+        .quiz-nav button:hover { background: #219a52; transform: scale(1.05); }
+        .quiz-punkte {
+            text-align: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2em;
+            color: var(--gruen);
+            margin-bottom: 15px;
+        }
+
+        @keyframes feier { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+        @keyframes schuetteln { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+        /* ===== CHECKLISTE ===== */
+        .checkliste {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin: 8px 0;
+            transition: background 0.3s;
+            cursor: pointer;
+            user-select: none;
+        }
+        .check-item:hover { background: #f0f0f0; }
+        .check-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            accent-color: var(--gruen);
+            cursor: pointer;
+        }
+        .check-item label {
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        .check-item.checked label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        /* ===== FUN FACTS ===== */
+        .fun-facts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .fact-karte {
+            background: linear-gradient(135deg, #fff, #fffde7);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--gelb);
+            transition: transform 0.3s;
+        }
+        .fact-karte:hover { transform: rotate(-1deg) scale(1.02); }
+        .fact-karte .fact-icon { font-size: 2em; margin-bottom: 10px; }
+        .fact-karte h4 {
+            color: var(--orange);
+            font-family: 'Fredoka One', cursive;
+            margin-bottom: 8px;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #2d5016;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-tomaten { font-size: 2em; letter-spacing: 10px; }
+
+        /* ===== GIESSKANNE CURSOR ===== */
+        .giessen-modus { cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='28' font-size='28'>&#x1F4A7;</text></svg>") 16 16, auto; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.2em; }
+            .timeline::before { left: 20px; }
+            .schritt, .schritt:nth-child(even) { flex-direction: column; }
+            .schritt-inhalt { width: 85%; margin-left: 50px; }
+            .schritt-nummer {
+                left: 20px;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .sonne { width: 60px; height: 60px; right: 15px; top: 10px; }
+            .sonne .auge { width: 8px; height: 10px; top: 22px; }
+            .sonne .auge.links { left: 16px; }
+            .sonne .auge.rechts { right: 16px; }
+            .sonne .mund { width: 18px; height: 10px; bottom: 16px; }
+            nav { gap: 8px; }
+            nav a { padding: 8px 16px; font-size: 0.95em; }
+            .quiz-optionen { grid-template-columns: 1fr; }
+            .fortschritt-bahn { flex-wrap: wrap; gap: 10px; justify-content: center; }
+        }
+
+        /* ===== KONFETTI ===== */
+        .konfetti-stueck {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: fallen 3s ease-out forwards;
+        }
+        @keyframes fallen {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+        }
+
+        /* ===== SCROLL ANIMATION ===== */
+        .einblenden {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .einblenden.sichtbar {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Wolken -->
+<div class="wolken">
+    <div class="wolke"></div>
+    <div class="wolke"></div>
+    <div class="wolke"></div>
+</div>
+
+<!-- Sonne -->
+<div class="sonne" title="Klick mich!" onclick="sonneKlick()">
+    <div class="auge links"></div>
+    <div class="auge rechts"></div>
+    <div class="mund"></div>
+</div>
+
+<!-- Header -->
+<header>
+    <h1>Tomaten-Abenteuer!</h1>
+    <p class="untertitel">Pflanze deine eigene Tomate und schau ihr beim Wachsen zu!</p>
+    <div class="maskottchen" onclick="konfettiWerfen()" title="Klick mich!">
+        <div class="tomaten-blatt">
+            <div></div><div></div><div></div>
+        </div>
+        <div class="tomaten-koerper">
+            <div class="tomaten-auge l"></div>
+            <div class="tomaten-auge r"></div>
+            <div class="tomaten-mund"></div>
+        </div>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav>
+    <a href="#ueberblick"><span class="emoji">&#x1F4CB;</span> Ueberblick</a>
+    <a href="#schritte"><span class="emoji">&#x1F331;</span> Wachstum</a>
+    <a href="#videos"><span class="emoji">&#x1F3AC;</span> Videos</a>
+    <a href="#quiz"><span class="emoji">&#x2753;</span> Quiz</a>
+    <a href="#checkliste"><span class="emoji">&#x2705;</span> Checkliste</a>
+    <a href="#fakten"><span class="emoji">&#x1F4A1;</span> Fun Facts</a>
+</nav>
+
+<div class="container">
+
+    <!-- ===== UEBERBLICK ===== -->
+    <section id="ueberblick" class="einblenden">
+        <h2 class="section-titel" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); color: var(--gruen);">
+            Was du ueber Tomaten wissen musst!
+        </h2>
+        <div class="ueberblick-karte">
+            <p style="text-align:center; font-size:1.2em; color:#555; margin-bottom:20px;">
+                Tomaten sind <strong>super cool</strong> und gehoeren zu den beliebtesten Pflanzen der Welt!
+                Hier lernst du alles, was du brauchst, um deine eigene Tomate grosszuziehen.
+            </p>
+            <div class="ueberblick-grid">
+                <div class="ueberblick-item">
+                    <div class="ueberblick-icon">&#x2600;&#xFE0F;</div>
+                    <h3>Sonnenlicht</h3>
+                    <p>Tomaten lieben die Sonne! Sie brauchen mindestens 6 Stunden Licht am Tag.</p>
+                </div>
+                <div class="ueberblick-item">
+                    <div class="ueberblick-icon">&#x1F4A7;</div>
+                    <h3>Wasser</h3>
+                    <p>Regelmaessig giessen, aber nicht zu viel! Die Erde soll feucht sein, nicht nass.</p>
+                </div>
+                <div class="ueberblick-item">
+                    <div class="ueberblick-icon">&#x1F321;&#xFE0F;</div>
+                    <h3>Waerme</h3>
+                    <p>Tomaten moegen es warm - am besten zwischen 18 und 25 Grad Celsius.</p>
+                </div>
+                <div class="ueberblick-item">
+                    <div class="ueberblick-icon">&#x1F33F;</div>
+                    <h3>Gute Erde</h3>
+                    <p>Naehrstoffreiche Erde ist das Zuhause deiner Tomate. Sie braucht guten Boden!</p>
+                </div>
+                <div class="ueberblick-item">
+                    <div class="ueberblick-icon">&#x23F0;</div>
+                    <h3>Geduld</h3>
+                    <p>Von der Aussaat bis zur Ernte dauert es etwa 2-3 Monate. Durchhalten!</p>
+                </div>
+                <div class="ueberblick-item">
+                    <div class="ueberblick-icon">&#x2764;&#xFE0F;</div>
+                    <h3>Liebe</h3>
+                    <p>Schau jeden Tag nach deiner Pflanze - sie wird es dir mit leckeren Tomaten danken!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WACHSTUMS-FORTSCHRITT ===== -->
+    <section class="einblenden">
+        <div class="fortschritt-container">
+            <h3 class="fortschritt-titel">So waechst deine Tomate - Der Weg vom Samen zur Frucht!</h3>
+            <div class="fortschritt-bahn">
+                <div class="fortschritt-punkt">
+                    <span class="punkt-emoji">&#x1FAD8;</span>
+                    <span class="punkt-text">Samen</span>
+                    <span class="punkt-zeit">Tag 1</span>
+                </div>
+                <div class="fortschritt-punkt">
+                    <span class="punkt-emoji">&#x1F331;</span>
+                    <span class="punkt-text">Keimling</span>
+                    <span class="punkt-zeit">Woche 1-2</span>
+                </div>
+                <div class="fortschritt-punkt">
+                    <span class="punkt-emoji">&#x1F33F;</span>
+                    <span class="punkt-text">Pflanze</span>
+                    <span class="punkt-zeit">Woche 3-5</span>
+                </div>
+                <div class="fortschritt-punkt">
+                    <span class="punkt-emoji">&#x1F33C;</span>
+                    <span class="punkt-text">Bluete</span>
+                    <span class="punkt-zeit">Woche 6-8</span>
+                </div>
+                <div class="fortschritt-punkt">
+                    <span class="punkt-emoji">&#x1F7E2;</span>
+                    <span class="punkt-text">Gruene Frucht</span>
+                    <span class="punkt-zeit">Woche 8-10</span>
+                </div>
+                <div class="fortschritt-punkt">
+                    <span class="punkt-emoji">&#x1F345;</span>
+                    <span class="punkt-text">Ernte!</span>
+                    <span class="punkt-zeit">Woche 10-14</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WACHSTUMS-SCHRITTE ===== -->
+    <section id="schritte" class="einblenden">
+        <h2 class="section-titel" style="background: linear-gradient(135deg, #fff9c4, #fff176); color: var(--braun);">
+            Die 6 Schritte zum Tomaten-Glueck!
+        </h2>
+        <div class="timeline">
+            <!-- Schritt 1 -->
+            <div class="schritt">
+                <div class="schritt-inhalt">
+                    <div class="schritt-emoji">&#x1FAD8;</div>
+                    <h3>Schritt 1: Samen in die Erde</h3>
+                    <p>
+                        Fuell einen kleinen Topf mit Erde. Drueck mit dem Finger ein kleines Loch
+                        (etwa 1 cm tief) in die Erde und leg den Tomatensamen hinein.
+                        Bedecke ihn leicht mit Erde und giess vorsichtig.
+                    </p>
+                    <div class="schritt-tipp">
+                        <strong>Tipp:</strong> Stell den Topf an einen warmen, hellen Platz - zum Beispiel auf die Fensterbank!
+                    </div>
+                </div>
+                <div class="schritt-nummer">1</div>
+            </div>
+
+            <!-- Schritt 2 -->
+            <div class="schritt">
+                <div class="schritt-inhalt">
+                    <div class="schritt-emoji">&#x1F331;</div>
+                    <h3>Schritt 2: Der Keimling erscheint!</h3>
+                    <p>
+                        Nach etwa 5-10 Tagen passiert etwas Magisches: Ein kleiner gruener Spross
+                        drueckt sich durch die Erde! Das sind die ersten zwei Blaetter deiner Tomate.
+                        Sie heissen "Keimblaetter".
+                    </p>
+                    <div class="schritt-tipp">
+                        <strong>Tipp:</strong> Halte die Erde immer leicht feucht, aber giesse nicht zu viel - Tomaten moegen keine nassen Fuesse!
+                    </div>
+                </div>
+                <div class="schritt-nummer">2</div>
+            </div>
+
+            <!-- Schritt 3 -->
+            <div class="schritt">
+                <div class="schritt-inhalt">
+                    <div class="schritt-emoji">&#x1F33F;</div>
+                    <h3>Schritt 3: Die Pflanze waechst!</h3>
+                    <p>
+                        Jetzt kommen die "echten" Blaetter - sie sehen gezackt aus und riechen schon
+                        nach Tomate! Die Pflanze wird jede Woche groesser. Wenn sie zu gross fuer den
+                        kleinen Topf wird, pflanze sie in einen groesseren Topf um.
+                    </p>
+                    <div class="schritt-tipp">
+                        <strong>Tipp:</strong> Steck einen Stock neben die Pflanze, damit sie sich festhalten kann, wenn sie gross wird!
+                    </div>
+                </div>
+                <div class="schritt-nummer">3</div>
+            </div>
+
+            <!-- Schritt 4 -->
+            <div class="schritt">
+                <div class="schritt-inhalt">
+                    <div class="schritt-emoji">&#x1F33C;</div>
+                    <h3>Schritt 4: Blueten kommen!</h3>
+                    <p>
+                        Kleine gelbe Blumen erscheinen an deiner Pflanze - das sind die Tomatenbluten!
+                        Aus jeder Bluete kann spaeter eine Tomate werden. Bienen und andere Insekten
+                        helfen dabei, die Blueten zu bestaeuben.
+                    </p>
+                    <div class="schritt-tipp">
+                        <strong>Tipp:</strong> Du kannst die Pflanze leicht schuetteln, um die Bestaeubung zu helfen - wie ein kleiner Wind!
+                    </div>
+                </div>
+                <div class="schritt-nummer">4</div>
+            </div>
+
+            <!-- Schritt 5 -->
+            <div class="schritt">
+                <div class="schritt-inhalt">
+                    <div class="schritt-emoji">&#x1F7E2;</div>
+                    <h3>Schritt 5: Gruene Tomaten wachsen</h3>
+                    <p>
+                        Wo vorher die Blueten waren, wachsen jetzt kleine gruene Kugeln - deine ersten
+                        Tomaten! Sie sind noch hart und sauer. Sei geduldig, sie brauchen noch Zeit
+                        zum Reifen.
+                    </p>
+                    <div class="schritt-tipp">
+                        <strong>Tipp:</strong> Nicht an den gruenen Tomaten ziehen! Sie fallen von alleine ab, wenn sie reif sind.
+                    </div>
+                </div>
+                <div class="schritt-nummer">5</div>
+            </div>
+
+            <!-- Schritt 6 -->
+            <div class="schritt">
+                <div class="schritt-inhalt">
+                    <div class="schritt-emoji">&#x1F345;</div>
+                    <h3>Schritt 6: Erntezeit - LECKER!</h3>
+                    <p>
+                        Die Tomaten werden langsam rot (oder gelb, je nach Sorte). Wenn sie sich
+                        leicht vom Stiel loesen lassen und schoen rot sind, kannst du sie ernten!
+                        Frisch gepflueckt schmecken sie am allerbesten!
+                    </p>
+                    <div class="schritt-tipp">
+                        <strong>Tipp:</strong> Probier deine selbst gezogene Tomate direkt im Garten - mit ein bisschen Salz schmeckt sie fantastisch!
+                    </div>
+                </div>
+                <div class="schritt-nummer">6</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ERKLAERVIDEOS ===== -->
+    <section id="videos" class="einblenden">
+        <h2 class="section-titel" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); color: #1565c0;">
+            Schau dir diese Videos an!
+        </h2>
+        <div class="video-grid">
+            <div class="video-karte">
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube-nocookie.com/embed/yKpOPizFMaQ" title="Tomaten Aussaat" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="video-info">
+                    <h3>Tomaten aussaeen fuer Anfaenger</h3>
+                    <p>Lerne Schritt fuer Schritt, wie du Tomatensamen richtig in die Erde bringst!</p>
+                    <span class="video-badge">Anfaenger</span>
+                </div>
+            </div>
+
+            <div class="video-karte">
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube-nocookie.com/embed/2R780EYB1X8" title="Tomaten pflegen" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="video-info">
+                    <h3>So pflegst du deine Tomaten</h3>
+                    <p>Giessen, duengen und Schaedlinge fernhalten - alles was deine Tomate braucht!</p>
+                    <span class="video-badge">Pflege</span>
+                </div>
+            </div>
+
+            <div class="video-karte">
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube-nocookie.com/embed/9w1wSIBGnfk" title="Tomaten fuer Kinder" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="video-info">
+                    <h3>Gaertnern mit Kindern</h3>
+                    <p>Tolle Tipps und Tricks fuer junge Gaertner - macht richtig Spass!</p>
+                    <span class="video-badge">Fuer Kids</span>
+                </div>
+            </div>
+        </div>
+        <p style="text-align:center; margin-top:20px; color:#777; font-size:0.9em;">
+            Frag deine Eltern, bevor du Videos im Internet schaust!
+        </p>
+    </section>
+
+    <!-- ===== QUIZ ===== -->
+    <section id="quiz" class="einblenden">
+        <h2 class="section-titel" style="background: linear-gradient(135deg, #fce4ec, #f8bbd0); color: #c2185b;">
+            Tomaten-Quiz - Teste dein Wissen!
+        </h2>
+        <div class="quiz-container">
+            <div class="quiz-punkte" id="quizPunkte">Punkte: 0 / 0</div>
+            <div class="quiz-frage" id="quizFrage"></div>
+            <div class="quiz-optionen" id="quizOptionen"></div>
+            <div class="quiz-ergebnis" id="quizErgebnis"></div>
+            <div class="quiz-nav">
+                <button id="quizWeiter" onclick="naechsteFrage()" style="display:none;">Naechste Frage &#x27A1;&#xFE0F;</button>
+                <button id="quizNeustart" onclick="quizNeustarten()" style="display:none;">Nochmal spielen! &#x1F504;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CHECKLISTE ===== -->
+    <section id="checkliste" class="einblenden">
+        <h2 class="section-titel" style="background: linear-gradient(135deg, #e8f5e9, #a5d6a7); color: #2e7d32;">
+            Meine Tomaten-Checkliste!
+        </h2>
+        <div class="checkliste">
+            <p style="text-align:center; margin-bottom:20px; color:#555;">
+                Hake ab, was du schon erledigt hast! Dein Fortschritt wird gespeichert.
+            </p>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c1"><label for="c1">&#x1F6D2; Tomatensamen besorgt</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c2"><label for="c2">&#x1FAA3; Blumentopf und Erde geholt</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c3"><label for="c3">&#x1FAD8; Samen in die Erde gesteckt</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c4"><label for="c4">&#x1F4A7; Zum ersten Mal gegossen</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c5"><label for="c5">&#x2600;&#xFE0F; Sonnigen Platz gefunden</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c6"><label for="c6">&#x1F331; Erster Keimling entdeckt!</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c7"><label for="c7">&#x1F33F; Echte Blaetter gewachsen</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c8"><label for="c8">&#x1F4CF; In groesseren Topf umgepflanzt</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c9"><label for="c9">&#x1F33C; Erste Blueten gesehen!</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c10"><label for="c10">&#x1F7E2; Gruene Tomaten entdeckt</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c11"><label for="c11">&#x1F345; Tomaten sind rot geworden!</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+                <input type="checkbox" id="c12"><label for="c12">&#x1F60B; Erste Tomate geerntet und probiert!</label>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FUN FACTS ===== -->
+    <section id="fakten" class="einblenden">
+        <h2 class="section-titel" style="background: linear-gradient(135deg, #fff9c4, #ffee58); color: var(--orange);">
+            Wusstest du schon?
+        </h2>
+        <div class="fun-facts">
+            <div class="fact-karte">
+                <div class="fact-icon">&#x1F30E;</div>
+                <h4>Aus Suedamerika!</h4>
+                <p>Tomaten kommen urspruenglich aus Suedamerika. Die Azteken haben sie schon vor ueber 500 Jahren angebaut!</p>
+            </div>
+            <div class="fact-karte">
+                <div class="fact-icon">&#x1F34E;</div>
+                <h4>Obst oder Gemuese?</h4>
+                <p>Wissenschaftlich ist die Tomate eine Frucht (also Obst!), aber im Alltag zaehlen wir sie zum Gemuese. Verrückt, oder?</p>
+            </div>
+            <div class="fact-karte">
+                <div class="fact-icon">&#x1F308;</div>
+                <h4>Bunte Vielfalt</h4>
+                <p>Es gibt ueber 10.000 verschiedene Tomatensorten! Rote, gelbe, gruene, lila und sogar schwarze Tomaten!</p>
+            </div>
+            <div class="fact-karte">
+                <div class="fact-icon">&#x1F4AA;</div>
+                <h4>Super gesund!</h4>
+                <p>Tomaten enthalten Vitamin C und Lycopin - das macht dich stark und haelt dich gesund!</p>
+            </div>
+            <div class="fact-karte">
+                <div class="fact-icon">&#x1F3C6;</div>
+                <h4>Riesen-Tomate</h4>
+                <p>Die schwerste Tomate der Welt wog ueber 4 Kilogramm - so schwer wie eine kleine Wassermelone!</p>
+            </div>
+            <div class="fact-karte">
+                <div class="fact-icon">&#x1F680;</div>
+                <h4>Weltraum-Tomaten</h4>
+                <p>Auf der Internationalen Raumstation (ISS) wurden schon Tomaten im Weltraum angebaut!</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-tomaten">&#x1F345; &#x1F331; &#x1F345; &#x1F331; &#x1F345;</div>
+    <p style="margin-top:15px;">Gemacht mit Liebe fuer kleine Gaertnerinnen und Gaertner!</p>
+    <p style="font-size:0.85em; margin-top:5px; opacity:0.7;">Tomaten-Abenteuer 2026</p>
+</footer>
+
+<script>
+    // ===== QUIZ =====
+    const quizDaten = [
+        {
+            frage: "Wie viel Sonnenlicht braucht eine Tomate am Tag?",
+            optionen: ["1 Stunde", "Mindestens 6 Stunden", "Gar kein Licht", "24 Stunden"],
+            richtig: 1
+        },
+        {
+            frage: "Woher kommen Tomaten urspruenglich?",
+            optionen: ["Deutschland", "China", "Suedamerika", "Australien"],
+            richtig: 2
+        },
+        {
+            frage: "Welche Farbe haben Tomatenblueten?",
+            optionen: ["Rot", "Blau", "Gelb", "Lila"],
+            richtig: 2
+        },
+        {
+            frage: "Ist die Tomate ein Obst oder Gemuese?",
+            optionen: ["Nur Gemuese", "Nur Obst", "Wissenschaftlich eine Frucht!", "Keins von beiden"],
+            richtig: 2
+        },
+        {
+            frage: "Wie tief soll man den Samen in die Erde druecken?",
+            optionen: ["10 cm", "Etwa 1 cm", "Gar nicht", "30 cm"],
+            richtig: 1
+        },
+        {
+            frage: "Was passiert nach etwa 5-10 Tagen?",
+            optionen: ["Die Tomate ist reif", "Nichts", "Ein Keimling erscheint", "Die Erde wird rot"],
+            richtig: 2
+        },
+        {
+            frage: "Welche Temperatur moegen Tomaten am liebsten?",
+            optionen: ["0 Grad (eiskalt!)", "18-25 Grad", "50 Grad (super heiss!)", "Minus 10 Grad"],
+            richtig: 1
+        },
+        {
+            frage: "Wie viele Tomatensorten gibt es ungefaehr?",
+            optionen: ["10", "100", "1.000", "Ueber 10.000!"],
+            richtig: 3
+        }
+    ];
+
+    let aktFrage = 0;
+    let punkte = 0;
+    let beantwortet = false;
+
+    function frageAnzeigen() {
+        const frage = quizDaten[aktFrage];
+        document.getElementById('quizFrage').textContent = frage.frage;
+        document.getElementById('quizErgebnis').textContent = '';
+        document.getElementById('quizWeiter').style.display = 'none';
+        document.getElementById('quizNeustart').style.display = 'none';
+        beantwortet = false;
+
+        const container = document.getElementById('quizOptionen');
+        container.innerHTML = '';
+        frage.optionen.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-btn';
+            btn.textContent = opt;
+            btn.onclick = () => antwortPruefen(i, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function antwortPruefen(index, btn) {
+        if (beantwortet) return;
+        beantwortet = true;
+        const frage = quizDaten[aktFrage];
+        const ergebnis = document.getElementById('quizErgebnis');
+
+        if (index === frage.richtig) {
+            btn.classList.add('richtig');
+            punkte++;
+            ergebnis.textContent = 'Super, das ist richtig! \u2B50';
+            ergebnis.style.color = 'var(--gruen)';
+            konfettiWerfen();
+        } else {
+            btn.classList.add('falsch');
+            document.querySelectorAll('.quiz-btn')[frage.richtig].classList.add('richtig');
+            ergebnis.textContent = 'Nicht ganz - aber jetzt weisst du es! \uD83D\uDCA1';
+            ergebnis.style.color = 'var(--orange)';
+        }
+
+        document.getElementById('quizPunkte').textContent = `Punkte: ${punkte} / ${aktFrage + 1}`;
+
+        if (aktFrage < quizDaten.length - 1) {
+            document.getElementById('quizWeiter').style.display = 'inline-block';
+        } else {
+            document.getElementById('quizNeustart').style.display = 'inline-block';
+            const prozent = Math.round(punkte / quizDaten.length * 100);
+            let nachricht = '';
+            if (prozent === 100) nachricht = '\uD83C\uDFC6 PERFEKT! Du bist ein Tomaten-Profi!';
+            else if (prozent >= 70) nachricht = '\uD83C\uDF1F Toll gemacht! Du kennst dich super aus!';
+            else if (prozent >= 40) nachricht = '\uD83D\uDC4D Guter Anfang! Lies nochmal die Schritte durch!';
+            else nachricht = '\uD83D\uDCAA Uebung macht den Meister! Versuch es nochmal!';
+            ergebnis.textContent += '\n' + nachricht;
+        }
+    }
+
+    function naechsteFrage() {
+        aktFrage++;
+        frageAnzeigen();
+    }
+
+    function quizNeustarten() {
+        aktFrage = 0;
+        punkte = 0;
+        document.getElementById('quizPunkte').textContent = 'Punkte: 0 / 0';
+        frageAnzeigen();
+    }
+
+    // Quiz starten
+    frageAnzeigen();
+
+    // ===== CHECKLISTE =====
+    function toggleCheck(item) {
+        const cb = item.querySelector('input[type="checkbox"]');
+        cb.checked = !cb.checked;
+        item.classList.toggle('checked', cb.checked);
+        checklisteSpeichern();
+    }
+
+    function checklisteSpeichern() {
+        const checks = {};
+        document.querySelectorAll('.check-item input').forEach(cb => {
+            checks[cb.id] = cb.checked;
+        });
+        localStorage.setItem('tomatenCheckliste', JSON.stringify(checks));
+    }
+
+    function checklisteLaden() {
+        const saved = localStorage.getItem('tomatenCheckliste');
+        if (saved) {
+            const checks = JSON.parse(saved);
+            Object.entries(checks).forEach(([id, checked]) => {
+                const cb = document.getElementById(id);
+                if (cb) {
+                    cb.checked = checked;
+                    cb.closest('.check-item').classList.toggle('checked', checked);
+                }
+            });
+        }
+    }
+    checklisteLaden();
+
+    // ===== KONFETTI =====
+    function konfettiWerfen() {
+        const farben = ['#e74c3c','#27ae60','#f1c40f','#e67e22','#ff9ff3','#3498db'];
+        for (let i = 0; i < 30; i++) {
+            const stueck = document.createElement('div');
+            stueck.className = 'konfetti-stueck';
+            stueck.style.left = Math.random() * 100 + 'vw';
+            stueck.style.top = '-10px';
+            stueck.style.background = farben[Math.floor(Math.random() * farben.length)];
+            stueck.style.animationDelay = Math.random() * 0.5 + 's';
+            stueck.style.animationDuration = (2 + Math.random() * 2) + 's';
+            stueck.style.width = (6 + Math.random() * 8) + 'px';
+            stueck.style.height = (6 + Math.random() * 8) + 'px';
+            stueck.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            document.body.appendChild(stueck);
+            setTimeout(() => stueck.remove(), 4000);
+        }
+    }
+
+    // ===== SONNE KLICK =====
+    function sonneKlick() {
+        document.body.classList.toggle('giessen-modus');
+        konfettiWerfen();
+    }
+
+    // ===== SCROLL ANIMATIONEN =====
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('sichtbar');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.einblenden').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
