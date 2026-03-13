@@ -2261,7 +2261,7 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
     quizResult.innerHTML = '<div style="font-size:4rem;margin-bottom:12px;">' + emoji + '</div>'
       + '<div class="quiz-score">' + quizScore + ' ' + scoreText + ' ' + quizQuestions.length + '</div>'
       + '<div class="quiz-message">' + (lang === 'en' ? msg.en : msg.de) + '</div>'
-      + '<button class="quiz-restart" onclick="void(0)">' + restartText + '</button>';
+      + '<button class="quiz-restart">' + restartText + '</button>';
 
     quizResult.querySelector('.quiz-restart').addEventListener('click', function() {
       renderQuiz();
