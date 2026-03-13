@@ -405,6 +405,78 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
   font-family: 'Fredoka', sans-serif; font-weight: 700;
   font-size: 0.85rem; color: var(--leaf); margin-bottom: 4px;
 }
+/* ===== QUIZ ===== */
+.quiz-container { max-width: 700px; margin: 0 auto; }
+.quiz-card {
+  background: var(--card-bg); backdrop-filter: blur(10px);
+  border-radius: 20px; padding: 28px 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  margin-bottom: 20px; animation: fadeIn 0.4s ease;
+}
+.quiz-question {
+  font-family: 'Fredoka', sans-serif; font-size: 1.3rem;
+  color: var(--soil); margin-bottom: 16px; line-height: 1.4;
+}
+.quiz-number {
+  display: inline-block; background: var(--sun-light); color: var(--soil);
+  border-radius: 50%; width: 32px; height: 32px; text-align: center;
+  line-height: 32px; font-size: 0.9rem; font-weight: 700; margin-right: 8px;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  padding: 14px 18px; border-radius: 14px; border: 2.5px solid #E0E0E0;
+  background: #fff; cursor: pointer; font-family: 'Nunito', sans-serif;
+  font-size: 1.05rem; transition: all 0.2s; text-align: left;
+}
+.quiz-option:hover { border-color: var(--leaf-light); background: #F1F8E9; }
+.quiz-option.correct {
+  border-color: var(--leaf); background: #E8F5E9;
+  animation: pulse 0.3s ease;
+}
+.quiz-option.wrong {
+  border-color: var(--tomato-light); background: #FFEBEE;
+}
+.quiz-option.disabled { pointer-events: none; opacity: 0.7; }
+.quiz-option.disabled.correct { opacity: 1; }
+.quiz-feedback {
+  margin-top: 12px; padding: 10px 14px; border-radius: 12px;
+  font-family: 'Fredoka', sans-serif; font-size: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+.quiz-feedback.correct { background: #E8F5E9; color: var(--leaf); }
+.quiz-feedback.wrong { background: #FFF3E0; color: #E65100; }
+
+.quiz-result {
+  max-width: 700px; margin: 0 auto; text-align: center;
+  background: var(--card-bg); backdrop-filter: blur(10px);
+  border-radius: 24px; padding: 40px 28px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+}
+.quiz-score {
+  font-family: 'Fredoka', sans-serif; font-size: 3rem;
+  color: var(--leaf); font-weight: 700;
+}
+.quiz-message {
+  font-family: 'Fredoka', sans-serif; font-size: 1.3rem;
+  color: var(--soil); margin: 12px 0 20px;
+}
+.quiz-restart {
+  padding: 14px 32px; border-radius: 50px; border: none;
+  background: var(--leaf-light); color: #fff;
+  font-family: 'Fredoka', sans-serif; font-size: 1.1rem;
+  font-weight: 600; cursor: pointer; transition: transform 0.2s;
+  box-shadow: 0 3px 12px rgba(76,175,80,0.3);
+}
+.quiz-restart:hover { transform: scale(1.05); }
+
+.quiz-progress {
+  max-width: 700px; margin: 0 auto 20px;
+  background: #E0E0E0; border-radius: 8px; height: 8px; overflow: hidden;
+}
+.quiz-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--leaf-light), var(--leaf));
+  border-radius: 8px; transition: width 0.3s ease;
+}
 </style>
 </head>
 <body>
@@ -737,6 +809,26 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
         <span class="card-title" data-t="card.check.title">Checkliste</span>
         <span class="card-desc" data-t="card.check.desc">Was bringen wir mit?</span>
       </a>
+
+      <a href="#quiz" class="activity-card border-orange" style="max-width:300px; border-bottom-color:#FFD54F;">
+        <svg class="card-icon" viewBox="0 0 120 120" style="width:80px;height:80px;" aria-label="Quiz">
+          <circle cx="60" cy="55" r="40" fill="#FFD54F"/>
+          <circle cx="60" cy="55" r="34" fill="#FFF8E1" opacity="0.3"/>
+          <text x="60" y="70" text-anchor="middle" font-family="Fredoka" font-size="40" font-weight="700" fill="#795548">?</text>
+          <circle cx="46" cy="42" r="3" fill="#333"/>
+          <circle cx="74" cy="42" r="3" fill="#333"/>
+          <circle cx="45.2" cy="41" r="1.2" fill="white"/>
+          <circle cx="73.2" cy="41" r="1.2" fill="white"/>
+          <path d="M50 78 Q60 86 70 78" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="42" cy="52" rx="5" ry="3" fill="#FF8CBC" opacity="0.3"/>
+          <ellipse cx="78" cy="52" rx="5" ry="3" fill="#FF8CBC" opacity="0.3"/>
+          <path d="M30 20 L32 14 L34 20 L32 26Z" fill="#FF8CBC" opacity="0.5"/>
+          <path d="M88 18 L90 12 L92 18 L90 24Z" fill="#A220DF" opacity="0.4"/>
+          <path d="M60 8 L62 2 L64 8 L62 14Z" fill="#FFD54F" opacity="0.6"/>
+        </svg>
+        <span class="card-title" data-t="card.quiz.title">Gemüse-Quiz!</span>
+        <span class="card-desc" data-t="card.quiz.desc">Teste dein Wissen!</span>
+      </a>
     </div>
   </div>
 </div>
@@ -991,6 +1083,53 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
   </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- VIEW: QUIZ                                                     -->
+<!-- ============================================================ -->
+<div id="quiz" class="view">
+  <div class="subpage-bg" style="background:linear-gradient(180deg,#FFF3E0 0%,#E8F5E9 100%);"></div>
+  <div class="subpage">
+    <button class="back-btn" data-t="btn.back" data-go="garten">&#8592; Zurück</button>
+    <h1 class="page-title">
+      <svg viewBox="0 0 50 50" style="width:48px;height:48px;" aria-hidden="true">
+        <circle cx="25" cy="25" r="22" fill="#FFD54F"/>
+        <text x="25" y="33" text-anchor="middle" font-family="Fredoka" font-size="24" font-weight="700" fill="#795548">?</text>
+      </svg>
+      <span data-t="quiz.title">Gemüse-Quiz!</span>
+    </h1>
+    <p class="page-subtitle" data-t="quiz.sub">Teste dein Wissen über unsere Gemüse-Freunde!</p>
+
+    <div class="character-intro">
+      <svg class="character-svg" viewBox="0 0 80 80" aria-hidden="true">
+        <defs>
+          <linearGradient id="petraPot3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A1887F"/><stop offset="100%" stop-color="#795548"/></linearGradient>
+          <linearGradient id="petraStem3" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#43A047"/><stop offset="100%" stop-color="#81C784"/></linearGradient>
+        </defs>
+        <path d="M22 55 L26 72 L54 72 L58 55Z" fill="url(#petraPot3)"/>
+        <rect x="19" y="50" width="42" height="9" rx="4" fill="#8D6E63"/>
+        <ellipse cx="40" cy="56" rx="18" ry="4" fill="#654321"/>
+        <path d="M40 54 Q39 38 40 24" stroke="url(#petraStem3)" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M40 34 Q30 24 24 20 Q30 19 40 30Z" fill="#66BB6A"/>
+        <path d="M40 34 Q50 24 56 20 Q50 19 40 30Z" fill="#81C784"/>
+        <circle cx="36" cy="28" r="2" fill="#333"/>
+        <circle cx="44" cy="28" r="2" fill="#333"/>
+        <circle cx="35.5" cy="27" r="0.8" fill="white"/>
+        <circle cx="43.5" cy="27" r="0.8" fill="white"/>
+        <path d="M37 32 Q40 36 43 32" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="33" cy="31" rx="3" ry="1.8" fill="#FF8CBC" opacity="0.3"/>
+        <ellipse cx="47" cy="31" rx="3" ry="1.8" fill="#FF8CBC" opacity="0.3"/>
+      </svg>
+      <div>
+        <div class="character-name" data-t="char.petra.name">Petra Pflanze</div>
+        <div class="character-speech" data-t="char.petra.quiz">Mal sehen, wie gut du unsere Gemüse-Freunde kennst! 10 Fragen warten auf dich!</div>
+      </div>
+    </div>
+
+    <div id="quizContainer" class="quiz-container"></div>
+    <div id="quizResult" class="quiz-result" style="display:none;"></div>
+  </div>
+</div>
+
 <!-- ===== FOOTER NAV ===== -->
 <nav class="footer-nav" aria-label="Navigation">
   <a href="#garten" data-nav="garten">
@@ -1012,6 +1151,10 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
   <a href="#checkliste" data-nav="checkliste">
     <svg viewBox="0 0 26 26"><rect x="5" y="3" width="16" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 10 L11 12.5 L17 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><line x1="9" y1="17" x2="17" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     <span data-t="nav.list">Liste</span>
+  </a>
+  <a href="#quiz" data-nav="quiz">
+    <svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="none" stroke="currentColor" stroke-width="2"/><text x="13" y="18" text-anchor="middle" font-family="Fredoka" font-size="14" font-weight="700" fill="currentColor">?</text></svg>
+    <span data-t="nav.quiz">Quiz</span>
   </a>
 </nav>
 
@@ -1070,7 +1213,13 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
     'char.tina.pflanz': { de: 'Ich zeige dir, wie aus einer Tomatenscheibe neue Pflanzen wachsen! Das ist wie Magie!', en: 'I\u0027ll show you how new plants grow from a tomato slice! It\u0027s like magic!' },
     'char.tina.tomaten': { de: 'Schritt für Schritt zeige ich dir, wie du Tomaten pflanzt!', en: 'Step by step, I\u0027ll show you how to plant tomatoes!' },
     'char.karlo.name': { de: 'Karlo Karotte', en: 'Karlo Carrot' },
-    'char.karlo.regrow': { de: 'Wusstest du, dass Gemüse nachwachsen kann? Tippe auf eine Karte und ich zeige es dir!', en: 'Did you know vegetables can regrow? Tap a card and I\u0027ll show you!' }
+    'char.karlo.regrow': { de: 'Wusstest du, dass Gemüse nachwachsen kann? Tippe auf eine Karte und ich zeige es dir!', en: 'Did you know vegetables can regrow? Tap a card and I\u0027ll show you!' },
+    'card.quiz.title': { de: 'Gemüse-Quiz!', en: 'Veggie Quiz!' },
+    'card.quiz.desc': { de: 'Teste dein Wissen!', en: 'Test your knowledge!' },
+    'quiz.title': { de: 'Gemüse-Quiz!', en: 'Veggie Quiz!' },
+    'quiz.sub': { de: 'Teste dein Wissen über unsere Gemüse-Freunde!', en: 'Test your knowledge about our veggie friends!' },
+    'char.petra.quiz': { de: 'Mal sehen, wie gut du unsere Gemüse-Freunde kennst! 10 Fragen warten auf dich!', en: 'Let\'s see how well you know our veggie friends! 10 questions await!' },
+    'nav.quiz': { de: 'Quiz', en: 'Quiz' }
   };
 
   function t(key) { return T[key] ? (T[key][lang] || T[key].de) : key; }
@@ -1089,6 +1238,7 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
     if (tomatoTimeline) tomatoTimeline.render();
     if (pflanzTimeline) pflanzTimeline.render();
     if (typeof renderRegrow === 'function') renderRegrow();
+    if (document.getElementById('quiz').classList.contains('active')) renderQuiz();
   }
 
   document.querySelectorAll('.lang-btn').forEach(function(btn) {
@@ -1111,6 +1261,7 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
       a.classList.toggle('active', a.getAttribute('data-nav') === id);
     });
     window.scrollTo(0, 0);
+    if (id === 'quiz') renderQuiz();
   }
 
   function onHash() {
@@ -1736,10 +1887,14 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
   /* ===== REGROW CARDS ===== */
   var regrowData = [
     {
-      name: 'Karotte', action: 'Oberes Stück in Wasser legen',
+      name: 'Karlo Karotte', subtitle: 'Der Abenteurer',
+      action: 'Oberes Stück in Wasser legen',
       detail: 'Schneide das obere Ende (2cm) ab und lege es in eine Schale mit Wasser. Nach ein paar Tagen wachsen grüne Blätter!',
-      name_en: 'Carrot', action_en: 'Put top piece in water',
+      fact: 'Karotten waren früher lila! Erst vor 400 Jahren wurden sie orange gezüchtet.',
+      name_en: 'Karlo Carrot', subtitle_en: 'The Adventurer',
+      action_en: 'Put top piece in water',
       detail_en: 'Cut off the top (2cm) and place it in a bowl of water. After a few days, green leaves will grow!',
+      fact_en: 'Carrots used to be purple! They were only bred to be orange 400 years ago.',
       svg: '<svg viewBox="0 0 100 100">'
         + '<defs><linearGradient id="carG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF8A50"/><stop offset="100%" stop-color="#E65100"/></linearGradient></defs>'
         + '<path d="M50 20 Q42 8 38 2 Q44 6 48 15Z" fill="#66BB6A"/>'
@@ -1755,10 +1910,14 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
         + '</svg>'
     },
     {
-      name: 'Sellerie', action: 'Unteren Teil in Wasser stellen',
+      name: 'Sven Sellerie', subtitle: 'Der Lange',
+      action: 'Unteren Teil in Wasser stellen',
       detail: 'Schneide den unteren Teil (5cm) ab und stelle ihn in eine Schale mit Wasser. In einer Woche wächst neuer Sellerie!',
-      name_en: 'Celery', action_en: 'Put bottom in water',
+      fact: 'Sellerie besteht zu 95% aus Wasser - fast wie eine Wasserflasche!',
+      name_en: 'Sven Celery', subtitle_en: 'The Tall One',
+      action_en: 'Put bottom in water',
       detail_en: 'Cut off the bottom (5cm) and place it in a bowl of water. In a week, new celery grows!',
+      fact_en: 'Celery is 95% water - almost like a water bottle!',
       svg: '<svg viewBox="0 0 100 100">'
         + '<defs><linearGradient id="celG" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#AED581"/><stop offset="100%" stop-color="#66BB6A"/></linearGradient></defs>'
         + '<path d="M35 95 Q30 60 38 30 Q40 20 42 25 Q44 50 42 90Z" fill="url(#celG)"/>'
@@ -1774,10 +1933,14 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
         + '</svg>'
     },
     {
-      name: 'Ingwer', action: 'Stück in feuchte Erde setzen',
+      name: 'Ida Ingwer', subtitle: 'Die Scharfe',
+      action: 'Stück in feuchte Erde setzen',
       detail: 'Lege ein Stück Ingwer mit den Knospen nach oben in feuchte Erde. In ein paar Wochen wächst eine neue Ingwer-Pflanze!',
-      name_en: 'Ginger', action_en: 'Plant piece in moist soil',
+      fact: 'Ingwer kann bei Bauchschmerzen helfen. Deshalb gibt es Ingwer-Tee!',
+      name_en: 'Ida Ginger', subtitle_en: 'The Spicy One',
+      action_en: 'Plant piece in moist soil',
       detail_en: 'Place a piece of ginger with buds facing up in moist soil. In a few weeks, a new ginger plant grows!',
+      fact_en: 'Ginger can help with tummy aches. That\'s why there\'s ginger tea!',
       svg: '<svg viewBox="0 0 100 100">'
         + '<defs><radialGradient id="ginG" cx="40%" cy="40%" r="60%"><stop offset="0%" stop-color="#FFE0B2"/><stop offset="100%" stop-color="#FFB74D"/></radialGradient></defs>'
         + '<path d="M25 55 Q20 50 25 45 Q30 35 45 40 Q50 30 60 35 Q70 28 75 40 Q85 38 82 50 Q88 55 80 60 Q78 70 65 65 Q55 72 45 65 Q35 68 30 60Z" fill="url(#ginG)"/>'
@@ -1792,10 +1955,14 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
         + '</svg>'
     },
     {
-      name: 'Salat', action: 'Strunk in Wasser stellen',
+      name: 'Sarah Salat', subtitle: 'Die Frische',
+      action: 'Strunk in Wasser stellen',
       detail: 'Den Strunk (unterstes Stück) vom Salat in eine Schale mit Wasser stellen. In wenigen Tagen wachsen neue Blätter!',
-      name_en: 'Lettuce', action_en: 'Put stump in water',
+      fact: 'Die alten Ägypter haben schon vor 4500 Jahren Salat angebaut!',
+      name_en: 'Sarah Lettuce', subtitle_en: 'The Fresh One',
+      action_en: 'Put stump in water',
       detail_en: 'Place the bottom piece of the lettuce in a bowl of water. In a few days, new leaves will grow!',
+      fact_en: 'The ancient Egyptians grew lettuce 4500 years ago!',
       svg: '<svg viewBox="0 0 100 100">'
         + '<defs><radialGradient id="letG" cx="50%" cy="60%" r="50%"><stop offset="0%" stop-color="#C8E6C9"/><stop offset="100%" stop-color="#66BB6A"/></radialGradient></defs>'
         + '<path d="M50 85 Q40 80 35 70 Q25 55 30 40 Q35 30 45 28 Q48 20 55 22 Q62 18 65 28 Q75 30 78 42 Q82 55 72 68 Q65 78 55 82Z" fill="url(#letG)"/>'
@@ -1808,10 +1975,14 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
         + '</svg>'
     },
     {
-      name: 'Kartoffel', action: 'Stück mit Augen in Erde pflanzen',
+      name: 'Kurt Kartoffel', subtitle: 'Der Starke',
+      action: 'Stück mit Augen in Erde pflanzen',
       detail: 'Schneide ein Stück mit "Augen" (Knospen) ab und pflanze es in Erde. Daraus wächst eine neue Kartoffelpflanze!',
-      name_en: 'Potato', action_en: 'Plant piece with eyes in soil',
+      fact: 'Eine Kartoffelpflanze kann bis zu 10 neue Kartoffeln machen!',
+      name_en: 'Kurt Potato', subtitle_en: 'The Strong One',
+      action_en: 'Plant piece with eyes in soil',
       detail_en: 'Cut a piece with "eyes" (buds) and plant it in soil. A new potato plant will grow!',
+      fact_en: 'One potato plant can make up to 10 new potatoes!',
       svg: '<svg viewBox="0 0 100 100">'
         + '<defs><radialGradient id="potG" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#D7CCC8"/><stop offset="100%" stop-color="#8D6E63"/></radialGradient></defs>'
         + '<ellipse cx="50" cy="55" rx="35" ry="28" fill="url(#potG)"/>'
@@ -1829,10 +2000,14 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
         + '</svg>'
     },
     {
-      name: 'Zwiebel', action: 'Unteren Teil in Wasser stellen',
+      name: 'Zara Zwiebel', subtitle: 'Die mit den Schichten',
+      action: 'Unteren Teil in Wasser stellen',
       detail: 'Stelle den unteren Teil einer Zwiebel in Wasser. Bald wachsen grüne Frühlingszwiebeln heraus!',
-      name_en: 'Onion', action_en: 'Put bottom in water',
+      fact: 'Zwiebeln lassen uns weinen weil sie ein Gas freisetzen wenn man sie schneidet!',
+      name_en: 'Zara Onion', subtitle_en: 'The Layered One',
+      action_en: 'Put bottom in water',
       detail_en: 'Place the bottom part of an onion in water. Soon green spring onions will grow!',
+      fact_en: 'Onions make us cry because they release a gas when you cut them!',
       svg: '<svg viewBox="0 0 100 100">'
         + '<defs><radialGradient id="onG" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#F3E5F5"/><stop offset="100%" stop-color="#CE93D8"/></radialGradient></defs>'
         + '<path d="M50 15 Q35 30 30 50 Q28 65 35 78 Q42 88 50 90 Q58 88 65 78 Q72 65 70 50 Q65 30 50 15Z" fill="url(#onG)"/>'
@@ -1846,10 +2021,14 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
         + '</svg>'
     },
     {
-      name: 'Steckling', action: 'Pflanzenzweig in Wasser stellen',
+      name: 'Steffi Steckling', subtitle: 'Die Neue',
+      action: 'Pflanzenzweig in Wasser stellen',
       detail: 'Schneide einen Zweig von einer Zimmerpflanze und stelle ihn in Wasser. Bald wachsen Wurzeln und du hast eine neue Pflanze!',
-      name_en: 'Plant Cutting', action_en: 'Put branch in water',
+      fact: 'Manche Pflanzen kann man einfach teilen und sie wachsen als neue Pflanze weiter!',
+      name_en: 'Steffi Cutting', subtitle_en: 'The New One',
+      action_en: 'Put branch in water',
       detail_en: 'Cut a branch from a houseplant and put it in water. Soon roots will grow and you have a new plant!',
+      fact_en: 'Some plants can simply be split and they keep growing as a new plant!',
       svg: '<svg viewBox="0 0 100 100">'
         + '<defs><linearGradient id="stG" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#43A047"/><stop offset="100%" stop-color="#81C784"/></linearGradient></defs>'
         + '<path d="M50 90 Q48 60 50 35" stroke="url(#stG)" stroke-width="4" fill="none" stroke-linecap="round"/>'
@@ -1874,18 +2053,25 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
       var card = document.createElement('div');
       card.className = 'regrow-card';
       var iName = lang === 'en' ? item.name_en : item.name;
+      var iSubtitle = lang === 'en' ? item.subtitle_en : item.subtitle;
       var iAction = lang === 'en' ? item.action_en : item.action;
       var iDetail = lang === 'en' ? item.detail_en : item.detail;
+      var iFact = lang === 'en' ? item.fact_en : item.fact;
+      var factLabel = lang === 'en' ? '\uD83D\uDCA1 Did you know?' : '\uD83D\uDCA1 Wusstest du?';
       var tapHint = lang === 'en' ? '&#128073; Tap for more' : '&#128073; Tippe für mehr';
       var smallSvg = item.svg.replace('viewBox="0 0 100 100"', 'viewBox="0 0 100 100" style="width:70px;height:70px"');
       card.innerHTML = '<div class="regrow-card-inner">'
         + '<div class="regrow-front">' + item.svg
         + '<div class="regrow-name">' + iName + '</div>'
+        + '<div style="font-family:Fredoka,sans-serif;font-size:0.85rem;color:#888;font-style:italic;">' + iSubtitle + '</div>'
         + '<div class="regrow-action">' + iAction + '</div>'
         + '<div class="tap-hint">' + tapHint + '</div>'
         + '</div>'
         + '<div class="regrow-back"><div class="regrow-detail">'
         + smallSvg + '<br><strong>' + iName + '</strong><br>' + iDetail
+        + '<div style="margin-top:10px;padding:8px 12px;background:#FFF8E1;border-radius:12px;font-size:0.85rem;">'
+        + '<strong>' + factLabel + '</strong><br>' + iFact
+        + '</div>'
         + '</div></div>'
         + '</div>';
       card.addEventListener('click', function() { card.classList.toggle('flipped'); });
@@ -1893,6 +2079,203 @@ h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
     });
   }
   renderRegrow();
+
+  /* ===== QUIZ ===== */
+  var quizQuestions = [
+    {
+      q: { de: 'Welche Farbe hatten Karotten früher?', en: 'What color were carrots originally?' },
+      options: {
+        de: ['Orange', 'Lila', 'Grün', 'Weiß'],
+        en: ['Orange', 'Purple', 'Green', 'White']
+      },
+      correct: 1,
+      feedback: { de: 'Genau! Karlo Karotte war früher lila!', en: 'Correct! Karlo Carrot used to be purple!' }
+    },
+    {
+      q: { de: 'Woraus besteht Sellerie zu 95%?', en: 'What is celery 95% made of?' },
+      options: {
+        de: ['Zucker', 'Luft', 'Wasser', 'Vitamine'],
+        en: ['Sugar', 'Air', 'Water', 'Vitamins']
+      },
+      correct: 2,
+      feedback: { de: 'Richtig! Sven Sellerie ist fast wie eine Wasserflasche!', en: 'Right! Sven Celery is almost like a water bottle!' }
+    },
+    {
+      q: { de: 'Wobei kann Ingwer helfen?', en: 'What can ginger help with?' },
+      options: {
+        de: ['Kopfschmerzen', 'Bauchschmerzen', 'Ohrenschmerzen', 'Fußschmerzen'],
+        en: ['Headaches', 'Tummy aches', 'Earaches', 'Foot pain']
+      },
+      correct: 1,
+      feedback: { de: 'Stimmt! Ida Ingwer hilft bei Bauchschmerzen!', en: 'That\'s right! Ida Ginger helps with tummy aches!' }
+    },
+    {
+      q: { de: 'Wer hat vor 4500 Jahren schon Salat angebaut?', en: 'Who grew lettuce 4500 years ago?' },
+      options: {
+        de: ['Die Römer', 'Die Wikinger', 'Die Ägypter', 'Die Chinesen'],
+        en: ['The Romans', 'The Vikings', 'The Egyptians', 'The Chinese']
+      },
+      correct: 2,
+      feedback: { de: 'Super! Sarah Salat kommt aus dem alten Ägypten!', en: 'Great! Sarah Lettuce comes from ancient Egypt!' }
+    },
+    {
+      q: { de: 'Wie viele neue Kartoffeln kann eine Pflanze machen?', en: 'How many new potatoes can one plant make?' },
+      options: {
+        de: ['2', '5', '10', '100'],
+        en: ['2', '5', '10', '100']
+      },
+      correct: 2,
+      feedback: { de: 'Richtig! Kurt Kartoffel kann bis zu 10 Kartoffeln machen!', en: 'Correct! Kurt Potato can make up to 10 potatoes!' }
+    },
+    {
+      q: { de: 'Warum weint man beim Zwiebelschneiden?', en: 'Why do we cry when cutting onions?' },
+      options: {
+        de: ['Wegen dem Geruch', 'Wegen einem Gas', 'Wegen dem Saft', 'Weil sie traurig sind'],
+        en: ['Because of the smell', 'Because of a gas', 'Because of the juice', 'Because they are sad']
+      },
+      correct: 1,
+      feedback: { de: 'Ja! Zara Zwiebel setzt ein Gas frei!', en: 'Yes! Zara Onion releases a gas!' }
+    },
+    {
+      q: { de: 'Was braucht eine Tomatenscheibe zum Wachsen?', en: 'What does a tomato slice need to grow?' },
+      options: {
+        de: ['Nur Licht', 'Erde und Wasser', 'Nur Luft', 'Zucker'],
+        en: ['Just light', 'Soil and water', 'Just air', 'Sugar']
+      },
+      correct: 1,
+      feedback: { de: 'Genau! Tina Tomate braucht Erde und Wasser!', en: 'Exactly! Tina Tomato needs soil and water!' }
+    },
+    {
+      q: { de: 'Welches Gemüse kann man aus einem Stück nachwachsen lassen?', en: 'Which vegetable can regrow from a piece?' },
+      options: {
+        de: ['Tomate', 'Banane', 'Kartoffel', 'Erdbeere'],
+        en: ['Tomato', 'Banana', 'Potato', 'Strawberry']
+      },
+      correct: 2,
+      feedback: { de: 'Richtig! Kurt Kartoffel wächst aus einem Stück mit Augen!', en: 'Right! Kurt Potato grows from a piece with eyes!' }
+    },
+    {
+      q: { de: 'Was wächst aus dem oberen Teil einer Karotte?', en: 'What grows from the top of a carrot?' },
+      options: {
+        de: ['Eine neue Karotte', 'Grüne Blätter', 'Blumen', 'Nichts'],
+        en: ['A new carrot', 'Green leaves', 'Flowers', 'Nothing']
+      },
+      correct: 1,
+      feedback: { de: 'Karlo Karotte bekommt wunderschöne grüne Blätter!', en: 'Karlo Carrot grows beautiful green leaves!' }
+    },
+    {
+      q: { de: 'Wie pflegt man eine junge Pflanze am besten?', en: 'How do you best care for a young plant?' },
+      options: {
+        de: ['Viel Wasser auf einmal', 'Regelmäßig ein bisschen gießen', 'Gar nicht gießen', 'Nur nachts gießen'],
+        en: ['Lots of water at once', 'Water a little regularly', 'Don\'t water at all', 'Only water at night']
+      },
+      correct: 1,
+      feedback: { de: 'Petra Pflanze sagt: Regelmäßig ein bisschen ist am besten!', en: 'Petra Plant says: A little regularly is best!' }
+    }
+  ];
+
+  var quizContainer = document.getElementById('quizContainer');
+  var quizResult = document.getElementById('quizResult');
+  var quizScore = 0;
+  var quizAnswered = 0;
+
+  function renderQuiz() {
+    quizContainer.innerHTML = '';
+    quizResult.style.display = 'none';
+    quizScore = 0;
+    quizAnswered = 0;
+
+    // Progress bar
+    var progressDiv = document.createElement('div');
+    progressDiv.className = 'quiz-progress';
+    progressDiv.innerHTML = '<div class="quiz-progress-fill" id="quizProgress" style="width:0%"></div>';
+    quizContainer.appendChild(progressDiv);
+
+    quizQuestions.forEach(function(q, qIdx) {
+      var card = document.createElement('div');
+      card.className = 'quiz-card';
+      card.id = 'quizQ' + qIdx;
+
+      var qText = lang === 'en' ? q.q.en : q.q.de;
+      var opts = lang === 'en' ? q.options.en : q.options.de;
+
+      var html = '<div class="quiz-question"><span class="quiz-number">' + (qIdx + 1) + '</span>' + qText + '</div>';
+      html += '<div class="quiz-options">';
+      opts.forEach(function(opt, oIdx) {
+        html += '<button class="quiz-option" data-q="' + qIdx + '" data-o="' + oIdx + '">' + opt + '</button>';
+      });
+      html += '</div>';
+      card.innerHTML = html;
+      quizContainer.appendChild(card);
+    });
+
+    // Option click handlers
+    quizContainer.querySelectorAll('.quiz-option').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var qIdx = parseInt(btn.getAttribute('data-q'), 10);
+        var oIdx = parseInt(btn.getAttribute('data-o'), 10);
+        var q = quizQuestions[qIdx];
+        var card = document.getElementById('quizQ' + qIdx);
+        var options = card.querySelectorAll('.quiz-option');
+
+        // Already answered?
+        if (card.querySelector('.quiz-feedback')) return;
+
+        var isCorrect = oIdx === q.correct;
+        if (isCorrect) quizScore++;
+        quizAnswered++;
+
+        // Mark options
+        options.forEach(function(o, i) {
+          o.classList.add('disabled');
+          if (i === q.correct) o.classList.add('correct');
+          if (i === oIdx && !isCorrect) o.classList.add('wrong');
+        });
+
+        // Feedback
+        var fb = document.createElement('div');
+        fb.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'wrong');
+        var fbText = lang === 'en' ? q.feedback.en : q.feedback.de;
+        fb.textContent = isCorrect ? ('\u2713 ' + fbText) : ('\u2717 ' + fbText);
+        card.querySelector('.quiz-options').appendChild(fb);
+
+        // Update progress
+        var prog = document.getElementById('quizProgress');
+        if (prog) prog.style.width = (quizAnswered / quizQuestions.length * 100) + '%';
+
+        // Show result when all answered
+        if (quizAnswered === quizQuestions.length) {
+          setTimeout(showQuizResult, 800);
+        }
+      });
+    });
+  }
+
+  function showQuizResult() {
+    var pct = Math.round(quizScore / quizQuestions.length * 100);
+    var msg, emoji;
+    if (pct === 100) { msg = { de: 'Perfekt! Du bist ein Gemüse-Experte!', en: 'Perfect! You\'re a veggie expert!' }; emoji = '\uD83C\uDFC6'; }
+    else if (pct >= 70) { msg = { de: 'Super! Du kennst dich richtig gut aus!', en: 'Great! You really know your stuff!' }; emoji = '\uD83C\uDF1F'; }
+    else if (pct >= 40) { msg = { de: 'Gut gemacht! Schau dir die Seiten nochmal an!', en: 'Well done! Check the pages again!' }; emoji = '\uD83D\uDC4D'; }
+    else { msg = { de: 'Nicht schlimm! Schau dir die Seiten an und versuch es nochmal!', en: 'No worries! Check the pages and try again!' }; emoji = '\uD83D\uDCAA'; }
+
+    var restartText = lang === 'en' ? 'Try again!' : 'Nochmal!';
+    var scoreText = lang === 'en' ? 'out of' : 'von';
+
+    quizResult.style.display = 'block';
+    quizResult.innerHTML = '<div style="font-size:4rem;margin-bottom:12px;">' + emoji + '</div>'
+      + '<div class="quiz-score">' + quizScore + ' ' + scoreText + ' ' + quizQuestions.length + '</div>'
+      + '<div class="quiz-message">' + (lang === 'en' ? msg.en : msg.de) + '</div>'
+      + '<button class="quiz-restart" onclick="void(0)">' + restartText + '</button>';
+
+    quizResult.querySelector('.quiz-restart').addEventListener('click', function() {
+      renderQuiz();
+      window.scrollTo(0, 0);
+    });
+
+    launchConfetti();
+    quizResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 
   /* ===== CHECKLIST ===== */
   var checkItems = document.querySelectorAll('.checklist-item');
